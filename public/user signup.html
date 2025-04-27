@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Sign Up/Login | PulseCare</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --primary-light: #a29bfe;
+      --primary-dark: #483dff;
+      --secondary: #00aaff;
+      --secondary-dark: #008ecc;
+      --accent: #00b894;
+      --white: #ffffff;
+      --light: #f8f9fa;
+      --dark: #2d3436;
+      --gray: #636e72;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+      --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+      --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f9fdfd 0%, #d7f0ff 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Floating particles background */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      opacity: 0.3;
+      animation: float linear infinite;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 25px;
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      animation: fadeInUp 0.8s 0.3s forwards;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: var(--gradient-primary);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+    }
+
+    .logo i {
+      font-size: 2rem;
+      animation: pulse 2s infinite;
+    }
+
+    .logo span {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(108, 99, 255, 0.2);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: var(--gradient-primary);
+      color: var(--white);
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-size: 1rem;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    .toggle {
+      color: var(--gray);
+      margin-top: 25px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-block;
+    }
+
+    .toggle:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .toggle-password:hover {
+      color: var(--primary-dark);
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    /* Error message */
+    .error-message {
+      color: #ff4757;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      text-align: left;
+      display: none;
+    }
+
+    /* Success animation */
+    @keyframes checkmark {
+      0% { stroke-dashoffset: 50; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px;
+      }
+      
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px;
+      }
+      
+      input, select, button {
+        padding: 12px;
+      }
+      
+      .logo i {
+        font-size: 1.8rem;
+      }
+      
+      .logo span {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-heartbeat"></i>
+      <span>PulseCare</span>
+    </div>
+    
+    <h2 id="formTitle">Patient Sign Up</h2>
+    
+    <div class="form-group" id="nameField">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your full name" />
+      <i class="fas fa-user input-icon"></i>
+      <div class="error-message" id="nameError"></div>
+    </div>
+    
+    <div class="form-group" id="ageField">
+      <label for="age">Age</label>
+      <input type="number" id="age" placeholder="Enter your age" />
+      <i class="fas fa-birthday-cake input-icon"></i>
+      <div class="error-message" id="ageError"></div>
+    </div>
+    
+    <div class="form-group" id="genderField">
+      <label for="gender">Gender</label>
+      <select id="gender">
+        <option value="" disabled selected>Select your gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+        <option value="Prefer not to say">Prefer not to say</option>
+      </select>
+      <div class="error-message" id="genderError"></div>
+    </div>
+    
+    <div class="form-group" id="phoneField">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" placeholder="Enter your phone number" />
+      <i class="fas fa-phone input-icon"></i>
+      <div class="error-message" id="phoneError"></div>
+    </div>
+    
+    <div class="form-group" id="addressField">
+      <label for="address">Address</label>
+      <input type="text" id="address" placeholder="Enter your address" />
+      <i class="fas fa-home input-icon"></i>
+      <div class="error-message" id="addressError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email" />
+      <i class="fas fa-envelope input-icon"></i>
+      <div class="error-message" id="emailError"></div>
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Password</label>
+      <div class="password-container">
+        <input type="password" id="password" placeholder="Create a password" />
+        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+      </div>
+      <div class="error-message" id="passwordError"></div>
+    </div>
+    
+   
+    
+    <button id="submitBtn" onclick="handleSubmit()">
+      <span id="btnText">Sign Up</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+    
+    <p class="toggle" onclick="toggleForm()">Already have an account? Log in</p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+      authDomain: "medisphere-d2f5c.firebaseapp.com",
+      projectId: "medisphere-d2f5c",
+      storageBucket: "medisphere-d2f5c.firebasestorage.app",
+      messagingSenderId: "947510967858",
+      appId: "1:947510967858:web:8aa2450cb433be8fe7c62b",
+      measurementId: "G-GD3KJZ34SN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Create floating particles
+    function createParticles() {
+      const particleCount = window.innerWidth < 768 ? 15 : 30;
+      const particlesContainer = document.getElementById('particles');
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random size between 5 and 15px
+        const size = Math.random() * 10 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        // Random animation duration and delay
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * 5;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // DOM elements
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    let isLogin = false;
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.classList.toggle('fa-eye');
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+
+    // Toggle between login and signup forms
+    window.toggleForm = () => {
+      isLogin = !isLogin;
+      document.getElementById('formTitle').textContent = isLogin ? 'Patient Login' : 'Patient Sign Up';
+      btnText.textContent = isLogin ? 'Log In' : 'Sign Up';
+      document.querySelector('.toggle').textContent = isLogin 
+        ? "Don't have an account? Sign up" 
+        : "Already have an account? Log in";
+
+      // Toggle fields visibility with animation
+      const fieldsToToggle = ['nameField', 'ageField', 'genderField', 'phoneField', 'addressField', 'profileUrlField'];
+      fieldsToToggle.forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.style.display = isLogin ? 'none' : 'block';
+          field.style.opacity = isLogin ? '0' : '1';
+          field.style.height = isLogin ? '0' : 'auto';
+          field.style.marginBottom = isLogin ? '0' : '20px';
+          field.style.transition = 'all 0.4s ease';
+        }
+      });
+    };
+
+    // Validate form inputs
+    function validateForm() {
+      let isValid = true;
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // Clear previous errors
+      document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // Email validation
+      if (!email) {
+        document.getElementById('emailError').textContent = 'Email is required';
+        document.getElementById('emailError').style.display = 'block';
+        isValid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email';
+        document.getElementById('emailError').style.display = 'block';
+        isValid = false;
+      }
+
+      // Password validation
+      if (!password) {
+        document.getElementById('passwordError').textContent = 'Password is required';
+        document.getElementById('passwordError').style.display = 'block';
+        isValid = false;
+      } else if (password.length < 6) {
+        document.getElementById('passwordError').textContent = 'Password must be at least 6 characters';
+        document.getElementById('passwordError').style.display = 'block';
+        isValid = false;
+      }
+
+      // Additional validation for signup form
+      if (!isLogin) {
+        const name = document.getElementById('name').value.trim();
+        const age = document.getElementById('age').value.trim();
+        const gender = document.getElementById('gender').value;
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
+
+        if (!name) {
+          document.getElementById('nameError').textContent = 'Full name is required';
+          document.getElementById('nameError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!age) {
+          document.getElementById('ageError').textContent = 'Age is required';
+          document.getElementById('ageError').style.display = 'block';
+          isValid = false;
+        } else if (isNaN(age) || age < 1 || age > 120) {
+          document.getElementById('ageError').textContent = 'Please enter a valid age';
+          document.getElementById('ageError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!gender) {
+          document.getElementById('genderError').textContent = 'Gender is required';
+          document.getElementById('genderError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!phone) {
+          document.getElementById('phoneError').textContent = 'Phone number is required';
+          document.getElementById('phoneError').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!address) {
+          document.getElementById('addressError').textContent = 'Address is required';
+          document.getElementById('addressError').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    }
+
+    // Handle form submission
+    window.handleSubmit = async () => {
+      if (!validateForm()) return;
+
+      // Show loading state
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+      submitBtn.disabled = true;
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const profileUrl = document.getElementById('profileUrl')?.value.trim() || '';
+
+      try {
+        if (isLogin) {
+          // Login logic
+          await signInWithEmailAndPassword(auth, email, password);
+          showSuccessMessage('Login successful! Redirecting...');
+          setTimeout(() => {
+            window.location.href = "user dashboard.html";
+          }, 1500);
+        } else {
+          // Signup logic
+          const name = document.getElementById('name').value.trim();
+          const age = document.getElementById('age').value.trim();
+          const gender = document.getElementById('gender').value;
+          const phone = document.getElementById('phone').value.trim();
+          const address = document.getElementById('address').value.trim();
+
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCred.user.uid;
+
+          await setDoc(doc(db, "patients", uid), {
+            name,
+            age,
+            gender,
+            phone,
+            address,
+            email,
+            profileUrl,
+            createdAt: new Date()
+          });
+
+          showSuccessMessage('Account created successfully! Redirecting...');
+          setTimeout(() => {
+            window.location.href = "user dashboard.html";
+          }, 1500);
+        }
+      } catch (error) {
+        // Reset loading state
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+        submitBtn.disabled = false;
+
+        // Handle specific errors
+        let errorMessage = error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered. Please log in.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password should be at least 6 characters.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorMessage = 'Incorrect password. Please try again.';
+        } else if (error.code === 'auth/user-not-found') {
+          errorMessage = 'No account found with this email. Please sign up.';
+        }
+
+        showErrorMessage(errorMessage);
+      }
+    };
+
+    // Show success message
+    function showSuccessMessage(message) {
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<i class="fas fa-check" style="margin-right: 8px;"></i> ${message}`;
+      submitBtn.style.background = 'var(--accent)';
+      
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.style.background = 'var(--gradient-primary)';
+      }, 3000);
+    }
+
+    // Show error message
+    function showErrorMessage(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.style.display = 'block';
+      errorDiv.style.textAlign = 'center';
+      errorDiv.style.marginTop = '15px';
+      errorDiv.style.color = 'var(--danger)';
+      errorDiv.textContent = message;
+      
+      const container = document.querySelector('.container');
+      const existingError = container.querySelector('.global-error');
+      if (existingError) {
+        container.removeChild(existingError);
+      }
+      
+      errorDiv.classList.add('global-error');
+      container.appendChild(errorDiv);
+      
+      setTimeout(() => {
+        errorDiv.style.opacity = '0';
+        setTimeout(() => {
+          if (errorDiv.parentNode) {
+            container.removeChild(errorDiv);
+          }
+        }, 500);
+      }, 5000);
+    }
+
+    // Initialize particles on load
+    window.addEventListener('load', () => {
+      createParticles();
+    });
+  </script>
+</body>
+</html>

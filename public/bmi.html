@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BMI Progress Tracker with Colorful Bar Graph</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --danger: #f72585;
+      --success: #4cc9f0;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --underweight: #3a86ff;
+      --normal: #38b000;
+      --overweight: #f8961e;
+      --obese: #f94144;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 2rem;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      outline: none;
+    }
+
+    .form-control::placeholder {
+      color: #adb5bd;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+      margin-top: 20px;
+    }
+
+    .btn-danger:hover {
+      background-color: #d1146a;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    #result {
+      margin: 25px 0;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      min-height: 2.5rem;
+    }
+
+    #feedback {
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1rem;
+      color: white;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    #feedback.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 250px;
+      margin: 30px 0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease 0.2s;
+    }
+
+    .chart-container.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .bmi-category {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .category {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .category.active {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .underweight {
+      background-color: var(--underweight);
+    }
+
+    .normal {
+      background-color: var(--normal);
+    }
+
+    .overweight {
+      background-color: var(--overweight);
+    }
+
+    .obese {
+      background-color: var(--obese);
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .floating { 
+      animation: floating 3s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .bmi-category {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container animate__animated animate__fadeIn">
+    <h1 class="floating">BMI Progress Tracker</h1>
+    
+    <form id="bmiForm">
+      <div class="form-group">
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" class="form-control" placeholder="Enter your height" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" class="form-control" placeholder="Enter your weight" required>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">
+        <i>📊</i> Calculate BMI
+      </button>
+    </form>
+
+    <div id="result" class="animate__animated"></div>
+    <div id="feedback"></div>
+
+    <div class="chart-container">
+      <canvas id="bmiChart"></canvas>
+    </div>
+
+    <div class="bmi-category">
+      <div class="category underweight">Underweight<br>&lt; 18.5</div>
+      <div class="category normal">Normal<br>18.5 - 24.9</div>
+      <div class="category overweight">Overweight<br>25 - 29.9</div>
+      <div class="category obese">Obese<br>≥ 30</div>
+    </div>
+
+    <button id="clearBtn" class="btn btn-danger">
+      <i>🗑️</i> Clear History
+    </button>
+  </div>
+
+  <script>
+    const form = document.getElementById('bmiForm');
+    const resultDiv = document.getElementById('result');
+    const feedbackDiv = document.getElementById('feedback');
+    const bmiChartCtx = document.getElementById('bmiChart').getContext('2d');
+    const clearBtn = document.getElementById('clearBtn');
+    const chartContainer = document.querySelector('.chart-container');
+    const categories = document.querySelectorAll('.category');
+
+    let bmiData = JSON.parse(localStorage.getItem('bmiData')) || [];
+    let chart;
+
+    // Initialize with animations
+    if (bmiData.length > 0) {
+      setTimeout(() => {
+        chartContainer.classList.add('show');
+      }, 300);
+      updateChart();
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+
+      if (height > 0 && weight > 0) {
+        const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+        const date = new Date().toLocaleDateString();
+
+        bmiData.push({ date, bmi });
+        localStorage.setItem('bmiData', JSON.stringify(bmiData));
+
+        // Animate result display
+        resultDiv.textContent = '';
+        resultDiv.classList.remove('animate__pulse');
+        void resultDiv.offsetWidth; // Trigger reflow
+        resultDiv.textContent = `Your BMI: ${bmi}`;
+        resultDiv.classList.add('animate__animated', 'animate__pulse');
+
+        // Show feedback with animation
+        feedbackDiv.textContent = getFeedback(bmi);
+        feedbackDiv.className = ''; // Reset classes
+        void feedbackDiv.offsetWidth; // Trigger reflow
+        feedbackDiv.classList.add('show', getFeedbackClass(bmi));
+
+        // Show chart container if hidden
+        if (!chartContainer.classList.contains('show')) {
+          chartContainer.classList.add('show');
+        }
+
+        updateChart();
+        highlightCategory(bmi);
+        form.reset();
+      } else {
+        resultDiv.textContent = "Please enter valid values.";
+        resultDiv.classList.add('animate__animated', 'animate__headShake');
+        feedbackDiv.textContent = "";
+        feedbackDiv.className = '';
+      }
+    });
+
+    function getFeedback(bmi) {
+      bmi = parseFloat(bmi);
+      if (bmi < 18.5) {
+        return "Underweight: Consider increasing calorie intake with nutrient-rich foods.";
+      } else if (bmi < 25) {
+        return "Normal weight: Great job! Maintain your healthy lifestyle.";
+      } else if (bmi < 30) {
+        return "Overweight: Regular exercise and balanced diet can help reach healthy weight.";
+      } else {
+        return "Obese: Consult a healthcare provider for a personalized weight management plan.";
+      }
+    }
+
+    function getFeedbackClass(bmi) {
+      bmi = parseFloat(bmi);
+      if (bmi < 18.5) return 'underweight';
+      if (bmi < 25) return 'normal';
+      if (bmi < 30) return 'overweight';
+      return 'obese';
+    }
+
+    function getBmiColor(bmiValue) {
+      const bmi = parseFloat(bmiValue);
+      if (bmi < 18.5) return '#3a86ff'; // Underweight - blue
+      if (bmi < 25) return '#38b000';   // Normal - green
+      if (bmi < 30) return '#f8961e';   // Overweight - orange
+      return '#f94144';                 // Obese - red
+    }
+
+    function highlightCategory(bmi) {
+      categories.forEach(cat => cat.classList.remove('active', 'pulse'));
+      
+      bmi = parseFloat(bmi);
+      let activeCat;
+      if (bmi < 18.5) activeCat = document.querySelector('.underweight');
+      else if (bmi < 25) activeCat = document.querySelector('.normal');
+      else if (bmi < 30) activeCat = document.querySelector('.overweight');
+      else activeCat = document.querySelector('.obese');
+      
+      activeCat.classList.add('active', 'pulse');
+    }
+
+    function updateChart() {
+      const labels = bmiData.map(entry => entry.date);
+      const values = bmiData.map(entry => parseFloat(entry.bmi));
+      const backgroundColors = values.map(bmi => getBmiColor(bmi));
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(bmiChartCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Your BMI History',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: backgroundColors.map(color => `${color}80`),
+            borderWidth: 1,
+            borderRadius: 5,
+            hoverBackgroundColor: backgroundColors.map(color => `${color}CC`),
+            hoverBorderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false,
+              position: 'top',
+              labels: {
+                font: {
+                  family: 'Poppins',
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              titleFont: {
+                family: 'Poppins',
+                size: 14
+              },
+              bodyFont: {
+                family: 'Poppins',
+                size: 12
+              },
+              callbacks: {
+                label: function(context) {
+                  const bmi = context.raw;
+                  let label = `BMI: ${bmi}`;
+                  if (bmi < 18.5) label += ' (Underweight)';
+                  else if (bmi < 25) label += ' (Normal)';
+                  else if (bmi < 30) label += ' (Overweight)';
+                  else label += ' (Obese)';
+                  return label;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              suggestedMin: 10,
+              suggestedMax: 40,
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              },
+              ticks: {
+                font: {
+                  family: 'Poppins'
+                }
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                font: {
+                  family: 'Poppins'
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    clearBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all your BMI history?')) {
+        localStorage.removeItem('bmiData');
+        bmiData = [];
+        resultDiv.textContent = 'History cleared';
+        resultDiv.classList.add('animate__animated', 'animate__fadeOut');
+        feedbackDiv.textContent = '';
+        feedbackDiv.className = '';
+        chartContainer.classList.remove('show');
+        
+        categories.forEach(cat => cat.classList.remove('active', 'pulse'));
+        
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        
+        setTimeout(() => {
+          resultDiv.classList.remove('animate__fadeOut');
+          resultDiv.textContent = '';
+        }, 1000);
+      }
+    });
+
+    // Highlight last BMI category if data exists
+    if (bmiData.length > 0) {
+      const lastBMI = bmiData[bmiData.length - 1].bmi;
+      highlightCategory(lastBMI);
+    }
+  </script>
+</body>
+</html>
