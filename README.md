@@ -141,6 +141,8 @@ LOGIN
 DOCTOR DASHBOARD
 ---
 
+![image](https://github.com/user-attachments/assets/4c324703-7b62-4a58-abf9-6a5856bbdcf5)
+
 
 
 
