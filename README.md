@@ -174,10 +174,11 @@ Built with 💙 by **Revathi**, **Rattishkumar**, **Harini**, **Abishek**
 ---
 
 ##  Planned Extension for Hackathon
-```
 
+
+---
 (PulseCare – Agentic AI for Clinical Trials)
-
+---
 
 
 Problem in Clinical Trials
@@ -218,7 +219,8 @@ Impact / Benefits
 
 🌍 Scalable for multilingual, global clinical trials
 
-```
+---
+
 
 ## 📄 License
 
