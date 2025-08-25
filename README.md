@@ -144,22 +144,6 @@ DOCTOR DASHBOARD
 ![image](https://github.com/user-attachments/assets/4c324703-7b62-4a58-abf9-6a5856bbdcf5)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---
 
 ## 🧪 How to Use
@@ -185,11 +169,56 @@ DOCTOR DASHBOARD
 ## 🤝 Made With
 
 Built with 💙 by **Revathi**, **Rattishkumar**, **Harini**, **Abishek**  
-If you like this project, star it ⭐ and share it!
+
 
 ---
 
 ## 📄 License
 
 Licensed under the [MIT License](LICENSE)
+
+##  Planned Extension for Hackathon
+
+
+(PulseCare – Agentic AI for Clinical Trials)
+
+
+
+Problem in Clinical Trials
+
+Fragmented patient data
+
+Manual CDISC dataset conversion
+
+Delays in CSR/TF report generation
+
+Low patient adherence & compliance
+
+Proposed Agentic AI Extension in PulseCare
+
+🤖 Patient Agents → Reminders, structured trial data capture, adherence tracking
+
+✅ Validation Agents → Detect anomalies, missing entries, ensure compliance
+
+📊 Automation Agents → Auto-convert logs into CDISC-compliant datasets
+
+📝 Generative AI Agents → Draft CSR and TLF reports automatically
+
+🔍 Monitoring Agents → Real-time dashboards for CROs, pharma sponsors, regulators
+
+Innovation
+
+First healthcare app combining patient engagement + regulatory compliance automation
+
+Seamlessly extends PulseCare from everyday care to enterprise clinical research
+
+Impact / Benefits
+
+⏱️ Faster reporting (up to 40% time saved)
+
+🎯 Higher accuracy & regulatory compliance
+
+👩‍⚕️ Better patient participation and adherence
+
+🌍 Scalable for multilingual, global clinical trials
 
