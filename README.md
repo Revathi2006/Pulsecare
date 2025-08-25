@@ -173,12 +173,8 @@ Built with 💙 by **Revathi**, **Rattishkumar**, **Harini**, **Abishek**
 
 ---
 
-## 📄 License
-
-Licensed under the [MIT License](LICENSE)
-
 ##  Planned Extension for Hackathon
-
+```
 
 (PulseCare – Agentic AI for Clinical Trials)
 
@@ -222,3 +218,8 @@ Impact / Benefits
 
 🌍 Scalable for multilingual, global clinical trials
 
+```
+
+## 📄 License
+
+Licensed under the [MIT License](LICENSE)
