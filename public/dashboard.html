@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard | Medisphere</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3a86ff;
+      --primary-light: #ebf3ff;
+      --secondary: #8338ec;
+      --success: #06d6a0;
+      --warning: #ffbe0b;
+      --danger: #ef476f;
+      --dark: #212529;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fb;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Header styles */
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      z-index: -1;
+    }
+
+    header h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-weight: 300;
+      animation: fadeIn 1s ease 0.3s forwards;
+      opacity: 0;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+    }
+
+    /* Profile section */
+    .profile-card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      position: sticky;
+      top: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary-light);
+      margin: 0 auto 1rem;
+      display: block;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-specialty {
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--primary-light);
+      border-radius: 20px;
+    }
+
+    .profile-details {
+      margin-top: 1.5rem;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+
+    .detail-content h4 {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--gray);
+      margin-bottom: 0.1rem;
+    }
+
+    .detail-content p {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    /* Main content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Stats cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .stat-card:nth-child(1)::before { background: var(--primary); }
+    .stat-card:nth-child(2)::before { background: var(--success); }
+    .stat-card:nth-child(3)::before { background: var(--warning); }
+    .stat-card:nth-child(4)::before { background: var(--danger); }
+    .stat-card:nth-child(5)::before { background: var(--secondary); }
+    .stat-card:nth-child(6)::before { background: #17a2b8; }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.2rem;
+    }
+
+    .stat-card:nth-child(1) .stat-icon { background: rgba(58, 134, 255, 0.1); color: var(--primary); }
+    .stat-card:nth-child(2) .stat-icon { background: rgba(6, 214, 160, 0.1); color: var(--success); }
+    .stat-card:nth-child(3) .stat-icon { background: rgba(255, 190, 11, 0.1); color: var(--warning); }
+    .stat-card:nth-child(4) .stat-icon { background: rgba(239, 71, 111, 0.1); color: var(--danger); }
+    .stat-card:nth-child(5) .stat-icon { background: rgba(131, 56, 236, 0.1); color: var(--secondary); }
+    .stat-card:nth-child(6) .stat-icon { background: rgba(23, 162, 184, 0.1); color: #17a2b8; }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-title {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+
+    /* Appointments section */
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title i {
+      margin-right: 0.75rem;
+      color: var(--primary);
+    }
+
+    .appointments-container {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+    }
+
+    .appointment-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      font-weight: 500;
+      color: var(--gray);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .appointment-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .appointment-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--primary);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 0.5s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .appointment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .appointment-card.pending {
+      border-left-color: var(--warning);
+    }
+
+    .appointment-card.accepted {
+      border-left-color: var(--success);
+    }
+
+    .appointment-card.cancelled {
+      border-left-color: var(--danger);
+    }
+
+    .appointment-info {
+      flex: 1;
+    }
+
+    .appointment-patient {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .appointment-patient i {
+      margin-right: 0.5rem;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .appointment-meta {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .appointment-date, .appointment-time, .appointment-status {
+      display: flex;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .appointment-date i, .appointment-time i, .appointment-status i {
+      margin-right: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .appointment-status.pending { color: var(--warning); }
+    .appointment-status.accepted { color: var(--success); }
+    .appointment-status.cancelled { color: var(--danger); }
+
+    .appointment-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    .action-btn i {
+      margin-right: 0.4rem;
+    }
+
+    .accept-btn {
+      background: rgba(6, 214, 160, 0.1);
+      color: var(--success);
+    }
+
+    .accept-btn:hover {
+      background: var(--success);
+      color: white;
+    }
+
+    .cancel-btn {
+      background: rgba(239, 71, 111, 0.1);
+      color: var(--danger);
+    }
+
+    .cancel-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .action-btn:disabled {
+      background: rgba(108, 117, 125, 0.1);
+      color: var(--gray);
+      cursor: not-allowed;
+    }
+
+    /* No appointments message */
+    .no-appointments {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+    }
+
+    .no-appointments i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-light);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Responsive design */
+    @media (max-width: 992px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-card {
+        position: static;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .appointment-actions {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .appointment-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to Your Doctor Dashboard</h1>
+    <p>Manage your appointments and patient care efficiently</p>
+  </header>
+
+  <div class="container">
+    <!-- Profile Card -->
+    <aside class="profile-card">
+      <div class="profile-header">
+        <img src="https://ui-avatars.com/api/?name=Dr+Smith&background=3a86ff&color=fff&size=200" alt="Doctor" class="profile-pic">
+        <h2 class="profile-name" id="name">Dr. Smith</h2>
+        <span class="profile-specialty" id="specialization">Cardiologist</span>
+      </div>
+      <div class="profile-details">
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="detail-content">
+            <h4>Email</h4>
+            <p id="email">dr.smith@example.com</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="detail-content">
+            <h4>Phone</h4>
+            <p id="phone">(123) 456-7890</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-briefcase-medical"></i>
+          </div>
+          <div class="detail-content">
+            <h4>Experience</h4>
+            <p id="experience">12 years</p>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-icon">
+            <i class="fas fa-hospital"></i>
+          </div>
+          <div class="detail-content">
+            <h4>Hospital</h4>
+            <p id="hospital">City General Hospital</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Grid -->
+      <section>
+        <h2 class="section-title"><i class="fas fa-chart-line"></i> Overview</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-value" id="total-appointments">0</div>
+            <div class="stat-title">Total Appointments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value" id="completed-count">0</div>
+            <div class="stat-title">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-value" id="pending-count">0</div>
+            <div class="stat-title">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-value" id="cancelled-count">0</div>
+            <div class="stat-title">Cancelled</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-user-injured"></i>
+            </div>
+            <div class="stat-value" id="current-patient">None</div>
+            <div class="stat-title">Current Patient</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-value" id="avg-waiting">N/A</div>
+            <div class="stat-title">Avg Wait Time</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appointments Section -->
+      <section class="appointments-container">
+        <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Appointments</h2>
+        <div class="appointment-tabs">
+          <button class="tab-btn active" data-tab="all">All Appointments</button>
+          <button class="tab-btn" data-tab="today">Today</button>
+          <button class="tab-btn" data-tab="upcoming">Upcoming</button>
+        </div>
+        <div class="appointment-list" id="appointment-list">
+          <!-- Appointments will be loaded here -->
+          <div class="no-appointments">
+            <i class="fas fa-calendar-plus"></i>
+            <p>No appointments scheduled yet</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      onSnapshot,
+      orderBy,
+      doc,
+      updateDoc,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+      authDomain: "medisphere-d2f5c.firebaseapp.com",
+      projectId: "medisphere-d2f5c",
+      storageBucket: "medisphere-d2f5c.appspot.com",
+      messagingSenderId: "947510967858",
+      appId: "1:947510967858:web:8aa2450cb433be8fe7c62b",
+      measurementId: "G-GD3KJZ34SN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Handle authentication state
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userEmail = user.email;
+
+        try {
+          // Get doctor profile data based on the authenticated user email
+          const q = query(collection(db, "doctor_registrations"), where("email", "==", userEmail));
+          const querySnapshot = await getDocs(q);
+
+          if (!querySnapshot.empty) {
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+
+              // Display doctor profile details
+              document.getElementById("name").textContent = "Dr. " + data.name;
+              document.getElementById("email").textContent = data.email;
+              document.getElementById("phone").textContent = data.phone;
+              document.getElementById("specialization").textContent = data.specialization;
+              document.getElementById("experience").textContent = data.experience + " years";
+              document.getElementById("hospital").textContent = data.hospital;
+
+              // Update profile picture with initials
+              const nameInitials = data.name.split(' ').map(n => n[0]).join('');
+              const profilePic = document.querySelector('.profile-pic');
+              profilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent('Dr ' + data.name)}&background=3a86ff&color=fff&size=200`;
+
+              // Load appointments for the doctor
+              loadAppointments(doc.id);
+            });
+          } else {
+            alert("Doctor profile not found. Please complete registration.");
+          }
+
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          showErrorToast("Failed to load profile data");
+        }
+
+      } else {
+        // Redirect to login if user is not authenticated
+        window.location.href = "login.html";
+      }
+    });
+
+    // Tab functionality
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        // You can add filtering logic here based on the tab clicked
+      });
+    });
+
+    // Load appointments for the doctor from Firestore
+    function loadAppointments(doctorId) {
+      const appointContainer = document.getElementById("appointment-list");
+      if (!appointContainer) return;
+
+      const appointQuery = query(
+        collection(db, "appointments"),
+        where("doctorId", "==", doctorId),
+        orderBy("date", "desc")
+      );
+
+      onSnapshot(appointQuery, (snapshot) => {
+        appointContainer.innerHTML = "";
+
+        if (snapshot.empty) {
+          appointContainer.innerHTML = `
+            <div class="no-appointments">
+              <i class="fas fa-calendar-plus"></i>
+              <p>No appointments scheduled yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        let completed = 0;
+        let pending = 0;
+        let cancelled = 0;
+        let totalWaitMinutes = 0;
+        let countWithTime = 0;
+        let currentPatient = null;
+
+        const now = new Date();
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const appointmentDate = data.date ? new Date(data.date) : null;
+          const appointmentTime = data.time || '';
+
+          // Create a new appointment card
+          const card = document.createElement('div');
+          card.className = `appointment-card ${data.status || 'pending'}`;
+          
+          // Format date if available
+          let formattedDate = 'N/A';
+          if (appointmentDate) {
+            formattedDate = appointmentDate.toLocaleDateString('en-US', {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            });
+          }
+
+          card.innerHTML = `
+            <div class="appointment-info">
+              <div class="appointment-patient">
+                <i class="fas fa-user"></i>
+                ${data.patientName || 'Unknown Patient'}
+              </div>
+              <div class="appointment-meta">
+                <div class="appointment-date">
+                  <i class="fas fa-calendar-day"></i>
+                  ${formattedDate}
+                </div>
+                <div class="appointment-time">
+                  <i class="fas fa-clock"></i>
+                  ${appointmentTime || 'N/A'}
+                </div>
+                <div class="appointment-status ${data.status || 'pending'}">
+                  <i class="fas fa-${getStatusIcon(data.status)}"></i>
+                  ${data.status || 'pending'}
+                </div>
+              </div>
+            </div>
+            <div class="appointment-actions">
+              <button class="action-btn accept-btn" data-id="${doc.id}" ${data.status === 'accepted' ? 'disabled' : ''}>
+                <i class="fas fa-check"></i>
+                ${data.status === 'accepted' ? 'Accepted' : 'Accept'}
+              </button>
+              <button class="action-btn cancel-btn" data-id="${doc.id}" ${data.status === 'cancelled' ? 'disabled' : ''}>
+                <i class="fas fa-times"></i>
+                ${data.status === 'cancelled' ? 'Cancelled' : 'Cancel'}
+              </button>
+            </div>
+          `;
+
+          appointContainer.appendChild(card);
+
+          // Add animation delay based on index
+          card.style.animationDelay = `${snapshot.docs.indexOf(doc) * 0.1}s`;
+
+          // Update counters based on appointment status
+          switch (data.status) {
+            case "accepted":
+              completed++;
+              break;
+            case "pending":
+              pending++;
+              break;
+            case "cancelled":
+              cancelled++;
+              break;
+          }
+
+          // Calculate waiting time and track current patient
+          if (appointmentDate && appointmentTime) {
+            const [hours, minutes] = appointmentTime.split(':').map(Number);
+            appointmentDate.setHours(hours, minutes, 0, 0);
+            
+            if (appointmentDate < now && data.status !== 'completed') {
+              const diffMs = now - appointmentDate;
+              const diffMin = Math.round(diffMs / 60000);
+              totalWaitMinutes += diffMin;
+              countWithTime++;
+
+              if (!currentPatient) {
+                currentPatient = data.patientName;
+              }
+            }
+          }
+
+          // Add event listeners to buttons
+          const acceptButton = card.querySelector('.accept-btn');
+          const cancelButton = card.querySelector('.cancel-btn');
+
+          acceptButton.addEventListener('click', () => updateAppointmentStatus(doc.id, 'accepted', acceptButton));
+          cancelButton.addEventListener('click', () => updateAppointmentStatus(doc.id, 'cancelled', cancelButton));
+        });
+
+        // Update the UI with appointment status counts
+        document.getElementById("total-appointments").textContent = snapshot.size;
+        document.getElementById("completed-count").textContent = completed;
+        document.getElementById("pending-count").textContent = pending;
+        document.getElementById("cancelled-count").textContent = cancelled;
+        document.getElementById("current-patient").textContent = currentPatient || "None";
+        
+        // Add animation to current patient stat if there is one
+        if (currentPatient) {
+          const currentPatientElement = document.getElementById("current-patient");
+          currentPatientElement.style.animation = "pulse 2s infinite";
+        }
+
+        document.getElementById("avg-waiting").textContent =
+          countWithTime > 0 ? `${Math.round(totalWaitMinutes / countWithTime)} mins` : "N/A";
+      }, (error) => {
+        console.error("Error loading appointments:", error);
+        showErrorToast("Failed to load appointments");
+      });
+    }
+
+    // Function to get appropriate icon for status
+    function getStatusIcon(status) {
+      switch (status) {
+        case 'accepted': return 'check-circle';
+        case 'cancelled': return 'times-circle';
+        default: return 'hourglass-half';
+      }
+    }
+
+    // Function to update appointment status (Accept or Cancel)
+    async function updateAppointmentStatus(appointmentId, status, button) {
+      try {
+        button.disabled = true;
+        button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+
+        const appointmentRef = doc(db, "appointments", appointmentId);
+        await updateDoc(appointmentRef, {
+          status: status,
+          updatedAt: Timestamp.now()
+        });
+
+        // Update button appearance
+        button.innerHTML = `
+          <i class="fas fa-${status === 'accepted' ? 'check' : 'times'}"></i>
+          ${status.charAt(0).toUpperCase() + status.slice(1)}
+        `;
+        
+        if (status === 'accepted') {
+          button.classList.remove('accept-btn');
+          button.classList.add('disabled-btn');
+        } else {
+          button.classList.remove('cancel-btn');
+          button.classList.add('disabled-btn');
+        }
+
+        showSuccessToast(`Appointment ${status} successfully`);
+
+      } catch (error) {
+        console.error("Error updating appointment status:", error);
+        button.disabled = false;
+        button.innerHTML = `
+          <i class="fas fa-${button.classList.contains('accept-btn') ? 'check' : 'times'}"></i>
+          ${button.classList.contains('accept-btn') ? 'Accept' : 'Cancel'}
+        `;
+        showErrorToast("Failed to update appointment");
+      }
+    }
+
+    // Toast notification functions
+    function showSuccessToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification success';
+      toast.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showErrorToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification error';
+      toast.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Add toast styles dynamically
+    const toastStyles = document.createElement('style');
+    toastStyles.textContent = `
+      .toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      .toast-notification.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast-notification.success {
+        background: var(--success);
+      }
+      .toast-notification.error {
+        background: var(--danger);
+      }
+      .toast-notification i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+    `;
+    document.head.appendChild(toastStyles);
+  </script>
+</body>
+</html>

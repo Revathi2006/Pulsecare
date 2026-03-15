@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PulseCare Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-light: #a29bfe;
+            --primary-dark: #483dff;
+            --secondary: #ff7675;
+            --accent: #00b894;
+            --danger: #ff4757;
+            --success: #00d2d3;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #636e72;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 100;
+            animation: fadeInDown 0.8s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .header-icons i {
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .header-icons i:hover {
+            transform: scale(1.1);
+            color: var(--primary-light);
+        }
+
+
+
+        /* Profile Section */
+        .profile-container {
+            position: relative;
+            margin: 0 auto;
+            max-width: 1200px;
+            padding: 1rem;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            margin: -50px auto 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            z-index: 10;
+            animation: slideUp 0.8s ease-out;
+            max-width: 800px;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--gradient-accent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            margin-right: 1.5rem;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--white);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            z-index: 2;
+            position: relative;
+        }
+
+        .profile-pic-bg {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            top: -5px;
+            left: -5px;
+            z-index: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-info h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 3px;
+        }
+
+        .profile-info p {
+            margin: 0.3rem 0;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(108, 99, 255, 0.1);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            min-width: 140px;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            background: rgba(108, 99, 255, 0.2);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .action-btn.primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+        }
+
+        .action-btn.secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 1px solid var(--primary-light);
+        }
+
+        .action-btn.danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .features a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .feature-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(108, 99, 255, 0.2);
+        }
+
+        .feature-box:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            transition: var(--transition);
+            background: rgba(108, 99, 255, 0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+
+        .feature-box:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            color: var(--white);
+            background: var(--gradient-primary);
+        }
+
+        .feature-box h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .feature-box h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--gradient-accent);
+            transition: width 0.3s ease;
+        }
+
+        .feature-box:hover h3::after {
+            width: 50px;
+        }
+
+        .feature-box p {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .learn-more {
+            margin-top: auto;
+            color: var(--primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .feature-box:hover .learn-more {
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+
+        /* Health Status Bar */
+        .health-status {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .health-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .health-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: var(--gradient-primary);
+            color: var(--white);
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: var(--gradient-accent);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--white);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--white);
+            font-size: 1.5rem;
+            transition: var(--transition);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px) scale(1.1);
+            background: rgba(255,255,255,0.2);
+            color: var(--primary-light);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Delays for feature boxes */
+        .feature-box:nth-child(1) { animation-delay: 0.1s; }
+        .feature-box:nth-child(2) { animation-delay: 0.2s; }
+        .feature-box:nth-child(3) { animation-delay: 0.3s; }
+        .feature-box:nth-child(4) { animation-delay: 0.4s; }
+        .feature-box:nth-child(5) { animation-delay: 0.5s; }
+        .feature-box:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .profile-card {
+                margin: -30px auto 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-pic-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .profile-info h2::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .profile-actions {
+                justify-content: center;
+            }
+
+            
+        }
+
+        @media (max-width: 480px) {
+            
+            .profile-stats {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-card {
+                margin-top: -70px;
+            }
+
+            .feature-box {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid var(--primary-light);
+            border-top: 8px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-text {
+            color: var(--primary-dark);
+            font-weight: 500;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating notification */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f1f1f1; /* Adjust background color */
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        /* Footer links styling */
+        .footer-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer-links a:hover {
+            color: #007bff; /* Change color on hover */
+        }
+
+        .contact-us a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .contact-us a:hover {
+            color: #007bff; /* Change color on hover */
+        }
+
+        /* Social links styling */
+        .social-links a {
+            margin: 0 10px;
+            color: #333;
+        }
+
+        .social-links a:hover {
+            color: #007bff; /* Change color on hover */
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading your health dashboard...</div>
+    </div>
+
+
+
+    <header>
+        <h1>PulseCare</h1>
+        <div class="header-icons">
+            
+            
+        </div>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-card" id="profileCard">
+            <div class="profile-header">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-bg"></div>
+                    <img src="https://ui-avatars.com/api/?name=Karthika&background=6c63ff&color=fff&size=100" alt="Profile" class="profile-pic" id="userProfilePic">
+                </div>
+                <div class="profile-info">
+                    <h2 id="userName">Karthika</h2>
+                    <p id="userEmail">kar@gmail.com</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <div>
+                                <div class="stat-value" id="userAge">N/A</div>
+                                <div class="stat-label">Age</div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="features">
+    <a href="specialist.html">
+      <div class="feature-box">
+          <div class="feature-icon"><i class="fas fa-user-md"></i></div>
+          <h3>Specialist Finder</h3>
+          <p>Find the best medical specialists while booking appointment.</p>
+          <span class="learn-more">Find specialists <i class="fas fa-arrow-right"></i></span>
+      </div>
+  </a>
+  
+        <a href="user.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                <h3>Book Appointment</h3>
+                <p>Schedule a visit with our certified doctors in just a few clicks. Choose your preferred time and specialist.</p>
+                <span class="learn-more">Book now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+        
+        <a href="firstaidguide.html">
+          <div class="feature-box">
+              <div class="feature-icon"><i class="fas fa-first-aid"></i></div>
+              <h3>First Aid Guide</h3>
+              <p>Comprehensive emergency instructions for common medical situations when you need them most.</p>
+              <span class="learn-more">View guide <i class="fas fa-arrow-right"></i></span>
+          </div>
+      </a>
+      <a href="bot.html">
+        <div class="feature-box">
+            <div class="feature-icon"><i class="fas fa-robot"></i></div>
+            <h3>MediBot Assistant</h3>
+            <p>Get instant health advice and recommendations from our AI-powered medical assistant, available 24/7.</p>
+            <span class="learn-more">Chat now <i class="fas fa-arrow-right"></i></span>
+        </div>
+    </a>
+        <a href="water tracker.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-tint"></i></div>
+                <h3>Aqua Tracker</h3>
+                <p>Track your daily water intake, set reminders, and stay properly hydrated throughout your day.</p>
+                <span class="learn-more">Track now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+      
+        
+      <a href="bmi.html">
+            
+   
+          <div class="feature-box">
+        <div class="feature-icon"><i class="fas fa-weight"></i></div>
+        <h3>BMI Calculator</h3>
+        <p>Calculate your BMI to track your wellness.</p>
+        <span class="learn-more">Calculate now <i class="fas fa-arrow-right"></i></span>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+        <p>© 2025 PulseCare. All rights reserved.</p>
+        <p>Your health is our priority. Stay safe and healthy.</p>
+        
+        <!-- Links in one line, centered -->
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a> | 
+            <a href="Terms.html">Terms of Service</a> | 
+            <a href="about.html">About Us</a>
+        </div>
+        
+        <!-- Contact Us section -->
+        <div class="contact-us">
+            
+            <a href="#">
+                <i ></i> Contact Us
+            </a>
+                
+                <br><br>
+                
+                <a href="https://mail.google.com/mail/u/0/#inbox">pulsecare2025@gmail.com</a>
+
+
+        </div>
+
+        <!-- Social media icons centered -->
+        <div class="social-links">
+            <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+<a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+<a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+<a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+
+        </div>
+    </div>
+</footer>
+
+
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+      authDomain: "medisphere-d2f5c.firebaseapp.com",
+      projectId: "medisphere-d2f5c",
+      storageBucket: "medisphere-d2f5c.appspot.com",
+      messagingSenderId: "947510967858",
+      appId: "1:947510967858:web:8aa2450cb433be8fe7c62b",
+      measurementId: "G-GD3KJZ34SN"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // DOM elements
+    const resetProfileBtn = document.getElementById('resetProfileBtn');
+    
+    const viewHealthBtn = document.getElementById('viewHealthBtn');
+    
+    const loading = document.querySelector('.loading');
+    const profileCard = document.getElementById('profileCard');
+
+    // Show loading spinner
+    function showLoading() {
+      loading.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Hide loading spinner
+    function hideLoading() {
+      loading.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Show notification
+    
+
+    // Ensure the user is authenticated
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        showLoading();
+        // Use the user's UID to fetch their data from Firestore
+        const userId = user.uid;
+        db.collection('patients').doc(userId).get()
+          .then(doc => {
+            if (doc.exists) {
+              const data = doc.data();
+              if (data.email) {
+                document.getElementById('userEmail').textContent = data.email;
+              }
+              if (data.age) {
+                document.getElementById('userAge').textContent = data.age;
+              }
+              if (data.name) {
+                document.getElementById('userName').textContent = data.name;
+                // Update profile picture with user's name
+                const profilePic = document.getElementById('userProfilePic');
+                profilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=6c63ff&color=fff&size=100`;
+              }
+              hideLoading();
+            } else {
+              console.log("No patient data found!");
+              hideLoading();
+            }
+          })
+          .catch(error => {
+            console.error("Error fetching patient data:", error);
+            hideLoading();
+            showNotification("Error loading profile data", false);
+          });
+      } else {
+        // User is not logged in
+        window.location.href = 'login.html'; // Redirect to login page if not authenticated
+      }
+    });
+
+    // Reset profile
+    resetProfileBtn.addEventListener('click', () => {
+      showLoading();
+      // Simulate API call
+      setTimeout(() => {
+        document.getElementById('userName').textContent = 'Karthika';
+        document.getElementById('userEmail').textContent = 'kar@gmail.com';
+        document.getElementById('userAge').textContent = 'N/A';
+        
+        // Reset profile picture
+        const profilePic = document.getElementById('userProfilePic');
+        profilePic.src = `https://ui-avatars.com/api/?name=Karthika&background=6c63ff&color=fff&size=100`;
+        
+        hideLoading();
+        showNotification("Profile reset to default values");
+      }, 1000);
+    });
+
+    // Edit profile
+   
+
+    // View health stats
+    
+
+    // Settings button
+    
+
+    // Notifications button
+    
+    // Add hover effect to feature boxes on touch devices
+    document.addEventListener('touchstart', function() {}, true);
+
+    // Simulate loading data
+    setTimeout(() => {
+      hideLoading();
+    }, 1500);
+  </script>
+</body>
+</html>
