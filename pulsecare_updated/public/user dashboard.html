@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PulseCare Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-light: #a29bfe;
+            --primary-dark: #483dff;
+            --secondary: #ff7675;
+            --accent: #00b894;
+            --danger: #ff4757;
+            --success: #00d2d3;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+            --gray: #636e72;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        header {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 100;
+            animation: fadeInDown 0.8s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* Notification Bell */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .notification-bell i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            padding: 3px 6px;
+            font-size: 12px;
+            min-width: 18px;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid white;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Notification Panel */
+        .notification-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notification-panel.open {
+            right: 0;
+        }
+
+        .panel-header {
+            padding: 20px;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h3 {
+            font-size: 1.3rem;
+        }
+
+        .panel-header h3 i {
+            margin-right: 10px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .notifications-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .notification-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            animation: slideIn 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .notification-item.reminder {
+            border-left-color: var(--success);
+        }
+
+        .notification-item.appointment {
+            border-left-color: var(--primary);
+        }
+
+        .notification-item .content {
+            display: flex;
+            gap: 12px;
+        }
+
+        .notification-item .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .notification-item.reminder .icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .notification-item.appointment .icon {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .notification-item .details {
+            flex: 1;
+        }
+
+        .notification-item .title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .notification-item .message {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .notification-item .time {
+            font-size: 0.75rem;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-item .time i {
+            margin-right: 4px;
+        }
+
+        .notification-item .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .notification-item .actions button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item .actions .mark-read {
+            background: var(--primary);
+            color: white;
+        }
+
+        .notification-item .actions .mark-read:hover {
+            background: var(--primary-dark);
+        }
+
+        .notification-item .actions .snooze {
+            background: #ffc107;
+            color: var(--dark);
+        }
+
+        .notification-item .actions .snooze:hover {
+            background: #e0a800;
+        }
+
+        .notification-item .actions .taken {
+            background: var(--success);
+            color: white;
+        }
+
+        .notification-item .actions .taken:hover {
+            background: #218838;
+        }
+
+        .empty-notifications {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-notifications i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+
+        /* Count Summary */
+        .count-summary {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .count-summary .total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .count-summary .breakdown {
+            display: flex;
+            gap: 10px;
+        }
+
+        .count-summary .breakdown span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .count-summary i.fa-pills {
+            color: var(--success);
+        }
+
+        .count-summary i.fa-calendar {
+            color: var(--primary);
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Profile Section */
+        .profile-container {
+            position: relative;
+            margin: 0 auto;
+            max-width: 1200px;
+            padding: 1rem;
+        }
+
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            margin: -50px auto 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            z-index: 10;
+            animation: slideUp 0.8s ease-out;
+            max-width: 800px;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--gradient-accent);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .profile-pic-container {
+            position: relative;
+            margin-right: 1.5rem;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--white);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            z-index: 2;
+            position: relative;
+        }
+
+        .profile-pic-bg {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            top: -5px;
+            left: -5px;
+            z-index: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-info h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--gradient-accent);
+            border-radius: 3px;
+        }
+
+        .profile-info p {
+            margin: 0.3rem 0;
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(108, 99, 255, 0.1);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            min-width: 140px;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            background: rgba(108, 99, 255, 0.2);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-item i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .features a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .feature-box {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: rgba(108, 99, 255, 0.2);
+        }
+
+        .feature-box:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            transition: var(--transition);
+            background: rgba(108, 99, 255, 0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+
+        .feature-box:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            color: var(--white);
+            background: var(--gradient-primary);
+        }
+
+        .feature-box h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .feature-box h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--gradient-accent);
+            transition: width 0.3s ease;
+        }
+
+        .feature-box:hover h3::after {
+            width: 50px;
+        }
+
+        .feature-box p {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .learn-more {
+            margin-top: auto;
+            color: var(--primary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .feature-box:hover .learn-more {
+            color: var(--primary-dark);
+            transform: translateX(5px);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: var(--gradient-primary);
+            color: var(--white);
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: var(--gradient-accent);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--white);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--white);
+            font-size: 1.5rem;
+            transition: var(--transition);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px) scale(1.1);
+            background: rgba(255,255,255,0.2);
+            color: var(--primary-light);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Delays for feature boxes */
+        .feature-box:nth-child(1) { animation-delay: 0.1s; }
+        .feature-box:nth-child(2) { animation-delay: 0.2s; }
+        .feature-box:nth-child(3) { animation-delay: 0.3s; }
+        .feature-box:nth-child(4) { animation-delay: 0.4s; }
+        .feature-box:nth-child(5) { animation-delay: 0.5s; }
+        .feature-box:nth-child(6) { animation-delay: 0.6s; }
+        .feature-box:nth-child(7) { animation-delay: 0.7s; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .profile-card {
+                margin: -30px auto 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-pic-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .profile-info h2::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .notification-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-card {
+                margin-top: -70px;
+            }
+
+            .feature-box {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid var(--primary-light);
+            border-top: 8px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-text {
+            color: var(--primary-dark);
+            font-weight: 500;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .footer-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer-links a:hover {
+            color: #007bff;
+        }
+
+        .contact-us a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .contact-us a:hover {
+            color: #007bff;
+        }
+
+        .social-links a {
+            margin: 0 10px;
+            color: #333;
+        }
+
+        .social-links a:hover {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading your health dashboard...</div>
+    </div>
+
+    <header>
+        <h1>PulseCare</h1>
+        <div class="header-icons">
+            <!-- Notification Bell -->
+            <div class="notification-bell" onclick="toggleNotificationPanel()">
+                <i class="fas fa-bell"></i>
+                <span id="notificationBadge" class="badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Panel -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="panel-header">
+            <h3><i class="fas fa-bell"></i> Notifications</h3>
+            <button class="close-btn" onclick="toggleNotificationPanel()">&times;</button>
+        </div>
+        <div id="notificationsList" class="notifications-list">
+            <div class="empty-notifications">
+                <i class="fas fa-bell-slash"></i>
+                <p>No notifications</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleNotificationPanel()"></div>
+
+    <div class="profile-container">
+        <div class="profile-card" id="profileCard">
+            <div class="profile-header">
+                <div class="profile-pic-container">
+                    <div class="profile-pic-bg"></div>
+                    <img src="https://ui-avatars.com/api/?name=User&background=6c63ff&color=fff&size=100" alt="Profile" class="profile-pic" id="userProfilePic">
+                </div>
+                <div class="profile-info">
+                    <h2 id="userName">Loading...</h2>
+                    <p id="userEmail">Loading...</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-birthday-cake"></i>
+                            <div>
+                                <div class="stat-value" id="userAge">-</div>
+                                <div class="stat-label">Age</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features">
+        <a href="specialist.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-user-md"></i></div>
+                <h3>Specialist Finder</h3>
+                <p>Find the best medical specialists while booking appointment.</p>
+                <span class="learn-more">Find specialists <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+  
+        <a href="user.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                <h3>Book Appointment</h3>
+                <p>Schedule a visit with our certified doctors in just a few clicks.</p>
+                <span class="learn-more">Book now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+        
+        <a href="firstaidguide.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-first-aid"></i></div>
+                <h3>First Aid Guide</h3>
+                <p>Comprehensive emergency instructions for common medical situations.</p>
+                <span class="learn-more">View guide <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="bot.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h3>MediBot Assistant</h3>
+                <p>Get instant health advice from our AI-powered medical assistant, 24/7.</p>
+                <span class="learn-more">Chat now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="water tracker.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-tint"></i></div>
+                <h3>Aqua Tracker</h3>
+                <p>Track your daily water intake and stay properly hydrated.</p>
+                <span class="learn-more">Track now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+      
+        <a href="bmi.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-weight"></i></div>
+                <h3>BMI Calculator</h3>
+                <p>Calculate your BMI to track your wellness.</p>
+                <span class="learn-more">Calculate now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <a href="prescription.html">
+            <div class="feature-box">
+                <div class="feature-icon"><i class="fas fa-prescription"></i></div>
+                <h3>Prescription Manager</h3>
+                <p>Store prescriptions and get medicine reminders with smart notifications.</p>
+                <span class="learn-more">Manage now <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 PulseCare. All rights reserved.</p>
+            <p>Your health is our priority. Stay safe and healthy.</p>
+            
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a> | 
+                <a href="Terms.html">Terms of Service</a> | 
+                <a href="about.html">About Us</a>
+            </div>
+            
+            <div class="contact-us">
+                <a href="#"><i></i> Contact Us</a>
+                <br><br>
+                <a href="https://mail.google.com/mail/u/0/#inbox">pulsecare2025@gmail.com</a>
+            </div>
+
+            <div class="social-links">
+                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+            authDomain: "medisphere-d2f5c.firebaseapp.com",
+            projectId: "medisphere-d2f5c",
+            storageBucket: "medisphere-d2f5c.appspot.com",
+            messagingSenderId: "947510967858",
+            appId: "1:947510967858:web:8aa2450cb433be8fe7c62b"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // DOM elements
+        const loading = document.querySelector('.loading');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationPanel = document.getElementById('notificationPanel');
+        const notificationsList = document.getElementById('notificationsList');
+        const overlay = document.querySelector('.overlay');
+
+        let currentUser = null;
+        
+        // Notification counts
+        let notificationCounts = {
+            total: 0,
+            prescriptions: 0,
+            appointments: 0
+        };
+
+        // Show loading spinner
+        function showLoading() {
+            loading.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            loading.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Show notification toast
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                background: ${type === 'success' ? '#28a745' : '#ff4757'};
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1001;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ============ NOTIFICATION FUNCTIONS ============
+
+        // Toggle notification panel
+        function toggleNotificationPanel() {
+            notificationPanel.classList.toggle('open');
+            overlay.classList.toggle('show');
+            
+            if (notificationPanel.classList.contains('open') && currentUser) {
+                loadNotifications();
+            }
+        }
+
+        // Update notification badge
+        function updateNotificationBadge() {
+            if (notificationCounts.total > 0) {
+                notificationBadge.style.display = 'inline';
+                notificationBadge.textContent = notificationCounts.total > 9 ? '9+' : notificationCounts.total;
+                
+                // Add tooltip showing breakdown
+                notificationBadge.title = `${notificationCounts.prescriptions} medicine reminders\n${notificationCounts.appointments} appointments`;
+            } else {
+                notificationBadge.style.display = 'none';
+            }
+            
+            console.log(`📊 Badge updated: Total=${notificationCounts.total}, 💊=${notificationCounts.prescriptions}, 📅=${notificationCounts.appointments}`);
+        }
+
+        // Load notifications from Firestore
+        async function loadNotifications() {
+            if (!currentUser) return;
+
+            try {
+                const notifications = [];
+                
+                // Reset counts
+                notificationCounts = {
+                    total: 0,
+                    prescriptions: 0,
+                    appointments: 0
+                };
+
+                // Get current time for comparison
+                const now = new Date();
+                const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+                console.log('🔍 Loading notifications for user:', currentUser.email);
+                console.log('⏰ Current time:', currentTime);
+
+                // ============ LOAD PRESCRIPTION REMINDERS ============
+                try {
+                    const prescriptionsSnapshot = await db.collection("prescriptions")
+                        .where("userId", "==", currentUser.uid)
+                        .get();
+
+                    console.log('📋 Found prescriptions:', prescriptionsSnapshot.size);
+
+                    prescriptionsSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        console.log('Prescription data:', data);
+                        
+                        if (data.medicines && Array.isArray(data.medicines)) {
+                            data.medicines.forEach(medicine => {
+                                if (medicine.remindersEnabled) {
+                                    const reminderTime = medicine.reminderTime || '09:00';
+                                    
+                                    // Only show upcoming reminders (time >= current time)
+                                    if (reminderTime >= currentTime) {
+                                        notifications.push({
+                                            id: `presc-${doc.id}-${medicine.name}`,
+                                            type: 'reminder',
+                                            title: '💊 Medicine Reminder',
+                                            message: `${medicine.name} ${medicine.dosage ? '(' + medicine.dosage + ')' : ''}`,
+                                            medicine: medicine.name,
+                                            dosage: medicine.dosage,
+                                            time: reminderTime,
+                                            timing: medicine.timing || 'Take as prescribed',
+                                            prescriptionId: doc.id
+                                        });
+                                        
+                                        notificationCounts.prescriptions++;
+                                        notificationCounts.total++;
+                                        
+                                        console.log(`➕ Added prescription reminder: ${medicine.name} at ${reminderTime}`);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    
+                    console.log(`✅ Found ${notificationCounts.prescriptions} prescription reminders`);
+                } catch (error) {
+                    console.log('Error loading prescriptions:', error);
+                }
+
+                // ============ LOAD APPOINTMENT NOTIFICATIONS ============
+                try {
+                    const today = new Date().toISOString().split('T')[0];
+
+                    const appointmentsSnapshot = await db.collection("appointments")
+                        .where("patientEmail", "==", currentUser.email)
+                        .get();
+
+                    console.log('📋 Found appointments:', appointmentsSnapshot.size);
+
+                    appointmentsSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        
+                        // Only show future appointments
+                        if (data.date && data.date >= today) {
+                            // Format date
+                            let displayDate = data.date;
+                            
+                            if (data.date && data.date.match(/^\d{2}\.\d{2}\.\d$/)) {
+                                const [day, month, year] = data.date.split('.');
+                                displayDate = `${day}/${month}/20${year}`;
+                            }
+
+                            notifications.push({
+                                id: doc.id,
+                                type: 'appointment',
+                                title: '📅 Appointment Reminder',
+                                message: `Appointment on ${displayDate} at ${data.time || '09:00'}`,
+                                time: data.time,
+                                date: data.date,
+                                status: data.status || 'pending'
+                            });
+                            
+                            notificationCounts.appointments++;
+                            notificationCounts.total++;
+                            
+                            console.log(`➕ Added appointment: ${displayDate} at ${data.time}`);
+                        }
+                    });
+                    
+                    console.log(`✅ Found ${notificationCounts.appointments} appointment reminders`);
+                } catch (error) {
+                    console.log('Error loading appointments:', error);
+                }
+
+                // Sort notifications by time
+                notifications.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+                // Update badge with total count
+                updateNotificationBadge();
+
+                // Display notifications
+                displayNotifications(notifications);
+
+                console.log(`📊 TOTAL: ${notificationCounts.total} notifications (${notificationCounts.prescriptions} medicines + ${notificationCounts.appointments} appointments)`);
+
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                notificationsList.innerHTML = `
+                    <div class="empty-notifications">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Unable to load notifications</p>
+                        <small style="color: #666;">${error.message}</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Display notifications in panel
+        function displayNotifications(notifications) {
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div class="empty-notifications">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications</p>
+                        <small style="color: #666;">Add prescriptions to get reminders</small>
+                    </div>
+                `;
+                return;
+            }
+
+            // Add summary header with counts
+            let html = `
+                <div class="count-summary">
+                    <div class="total">
+                        <span><i class="fas fa-bell" style="color: var(--primary);"></i> Total: ${notificationCounts.total}</span>
+                        <div class="breakdown">
+                            <span><i class="fas fa-pills"></i> ${notificationCounts.prescriptions}</span>
+                            <span><i class="fas fa-calendar"></i> ${notificationCounts.appointments}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            notifications.forEach(notif => {
+                if (notif.type === 'reminder') {
+                    // Prescription reminder
+                    html += `
+                        <div class="notification-item reminder" data-id="${notif.id}">
+                            <div class="content">
+                                <div class="icon">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="title">💊 Medicine Reminder</div>
+                                    <div class="message">
+                                        <strong>${notif.medicine}</strong> ${notif.dosage ? `(${notif.dosage})` : ''}
+                                        <br><small>${notif.timing}</small>
+                                    </div>
+                                    <div class="time">
+                                        <span><i class="fas fa-clock"></i> Today at ${notif.time}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button class="taken" onclick="markMedicineTaken('${notif.prescriptionId}', '${notif.medicine}')">
+                                            <i class="fas fa-check"></i> Taken
+                                        </button>
+                                        <button class="snooze" onclick="snoozeReminder('${notif.id}')">
+                                            <i class="fas fa-clock"></i> Snooze
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Appointment reminder
+                    html += `
+                        <div class="notification-item appointment" data-id="${notif.id}">
+                            <div class="content">
+                                <div class="icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="details">
+                                    <div class="title">📅 ${notif.title}</div>
+                                    <div class="message">${notif.message}</div>
+                                    <div class="time">
+                                        <span><i class="fas fa-clock"></i> ${notif.time || notif.date}</span>
+                                        <span style="text-transform: capitalize;">${notif.status}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button class="mark-read" onclick="markAsRead('${notif.id}')">
+                                            <i class="fas fa-check"></i> OK
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            notificationsList.innerHTML = html;
+        }
+
+        // Mark medicine as taken
+        async function markMedicineTaken(prescriptionId, medicineName) {
+            try {
+                console.log('Marking medicine as taken:', prescriptionId, medicineName);
+                
+                // Update in Firestore
+                const prescriptionRef = db.collection('prescriptions').doc(prescriptionId);
+                const doc = await prescriptionRef.get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    const updatedMedicines = data.medicines.map(med => {
+                        if (med.name === medicineName) {
+                            return { ...med, lastTaken: new Date().toISOString(), remindersEnabled: false };
+                        }
+                        return med;
+                    });
+                    
+                    await prescriptionRef.update({ medicines: updatedMedicines });
+                    console.log('✅ Firestore updated');
+                }
+
+                // Remove from UI
+                const item = document.querySelector(`[data-id="presc-${prescriptionId}-${medicineName}"]`);
+                if (item) {
+                    item.style.opacity = '0.5';
+                    setTimeout(() => {
+                        item.remove();
+                        
+                        // Update counts
+                        notificationCounts.prescriptions--;
+                        notificationCounts.total--;
+                        updateNotificationBadge();
+                        
+                        // If no notifications left, show empty message
+                        if (notificationCounts.total === 0) {
+                            notificationsList.innerHTML = `
+                                <div class="empty-notifications">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>No notifications</p>
+                                </div>
+                            `;
+                        } else {
+                            // Update summary header
+                            const summary = document.querySelector('.count-summary');
+                            if (summary) {
+                                summary.innerHTML = `
+                                    <div class="total">
+                                        <span><i class="fas fa-bell" style="color: var(--primary);"></i> Total: ${notificationCounts.total}</span>
+                                        <div class="breakdown">
+                                            <span><i class="fas fa-pills"></i> ${notificationCounts.prescriptions}</span>
+                                            <span><i class="fas fa-calendar"></i> ${notificationCounts.appointments}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }, 300);
+                }
+                
+                showToast('✅ Medicine marked as taken', 'success');
+            } catch (error) {
+                console.error('Error marking medicine as taken:', error);
+                showToast('Error updating medicine status', 'error');
+            }
+        }
+
+        // Mark notification as read (for appointments)
+        function markAsRead(notificationId) {
+            const item = document.querySelector(`[data-id="${notificationId}"]`);
+            if (item) {
+                // Check if it's appointment
+                const isAppointment = item.classList.contains('appointment');
+                
+                item.style.opacity = '0.5';
+                setTimeout(() => {
+                    item.remove();
+                    
+                    // Update counts
+                    if (isAppointment) {
+                        notificationCounts.appointments--;
+                    }
+                    notificationCounts.total--;
+                    updateNotificationBadge();
+                    
+                    // If no notifications left, show empty message
+                    if (notificationCounts.total === 0) {
+                        notificationsList.innerHTML = `
+                            <div class="empty-notifications">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>No notifications</p>
+                            </div>
+                        `;
+                    } else {
+                        // Update summary header
+                        const summary = document.querySelector('.count-summary');
+                        if (summary) {
+                            summary.innerHTML = `
+                                <div class="total">
+                                    <span><i class="fas fa-bell" style="color: var(--primary);"></i> Total: ${notificationCounts.total}</span>
+                                    <div class="breakdown">
+                                        <span><i class="fas fa-pills"></i> ${notificationCounts.prescriptions}</span>
+                                        <span><i class="fas fa-calendar"></i> ${notificationCounts.appointments}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                }, 300);
+            }
+            
+            showToast('✅ Notification marked as read', 'success');
+        }
+
+        // Snooze reminder
+        function snoozeReminder(notificationId) {
+            const item = document.querySelector(`[data-id="${notificationId}"]`);
+            if (item) {
+                const timeSpan = item.querySelector('.time span:first-child');
+                if (timeSpan) {
+                    // Add 10 minutes to current time
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() + 10);
+                    const newTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                    timeSpan.innerHTML = `<i class="fas fa-clock"></i> Snoozed to ${newTime}`;
+                }
+            }
+            showToast('⏰ Snoozed for 10 minutes', 'success');
+        }
+
+        // Ensure the user is authenticated
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                showLoading();
+                currentUser = user;
+                console.log('✅ User logged in:', user.email);
+                
+                // Load user profile
+                const userId = user.uid;
+                db.collection('patients').doc(userId).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            console.log('✅ User profile loaded:', data);
+                            
+                            if (data.email) {
+                                document.getElementById('userEmail').textContent = data.email;
+                            }
+                            if (data.age) {
+                                document.getElementById('userAge').textContent = data.age;
+                            }
+                            if (data.name) {
+                                document.getElementById('userName').textContent = data.name;
+                                const profilePic = document.getElementById('userProfilePic');
+                                profilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=6c63ff&color=fff&size=100`;
+                            }
+                        } else {
+                            console.log('No patient data found, using auth email');
+                            document.getElementById('userEmail').textContent = user.email;
+                            document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
+                        }
+                        hideLoading();
+                        
+                        // Load notifications after profile
+                        loadNotifications();
+                    })
+                    .catch(error => {
+                        console.error("Error fetching patient data:", error);
+                        hideLoading();
+                        showToast("Error loading profile data", "error");
+                        
+                        // Still load notifications
+                        loadNotifications();
+                    });
+            } else {
+                console.log('❌ No user logged in, redirecting to login');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Check for new notifications every 30 seconds
+        setInterval(() => {
+            if (currentUser) {
+                console.log('🔄 Auto-refreshing notifications...');
+                loadNotifications();
+            }
+        }, 30000);
+
+        // Simulate loading data
+        setTimeout(() => {
+            hideLoading();
+        }, 1500);
+    </script>
+</body>
+</html>

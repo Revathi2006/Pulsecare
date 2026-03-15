@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luxury Medical Appointment</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #5d4e8b;
+      --secondary: #8b72a8;
+      --accent: #ff9e7d;
+      --light: #f8f5ff;
+      --dark: #2a2438;
+      --token: #4CAF50;
+      --claimed: #FF9800;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--light), #e6e0f8);
+      min-height: 100vh;
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      transform-style: preserve-3d;
+      transition: all 0.5s ease;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      opacity: 0.1;
+      z-index: -1;
+    }
+    
+    .header {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header h2 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-weight: 300;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      transform: rotate(30deg);
+      animation: shine 8s infinite;
+    }
+    
+    @keyframes shine {
+      0%, 100% { transform: rotate(30deg) translateX(0); }
+      50% { transform: rotate(30deg) translateX(100%); }
+    }
+    
+    .form-container {
+      padding: 2.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.8rem;
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+      transition: all 0.3s ease;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: rgba(255,255,255,0.8);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(93, 78, 139, 0.2);
+      outline: none;
+    }
+    
+    .form-control:hover {
+      border-color: var(--secondary);
+    }
+    
+    .select-wrapper {
+      position: relative;
+    }
+    
+    .select-wrapper::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      pointer-events: none;
+    }
+    
+    select.form-control {
+      appearance: none;
+      padding-right: 2.5rem;
+    }
+    
+    .btn {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 1.2rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(93, 78, 139, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(93, 78, 139, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .btn:hover::after {
+      left: 100%;
+    }
+    
+    .floating-elements {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .floating-element {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      animation: float 15s infinite linear;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-50px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+    
+    .doctor-card {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      position: relative;
+    }
+    
+    .doctor-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-color: var(--primary);
+    }
+    
+    .doctor-card.selected {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    
+    .doctor-card.selected .queue-info {
+      color: white;
+      opacity: 0.9;
+    }
+    
+    .doctor-card.selected .queue-bar {
+      background-color: rgba(255,255,255,0.3);
+    }
+    
+    .doctor-card.selected .queue-progress {
+      background-color: white;
+    }
+    
+    .doctor-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1.5rem;
+      border: 3px solid var(--light);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .doctor-info {
+      flex: 1;
+    }
+    
+    .doctor-info h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .doctor-info p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 0.3rem;
+    }
+    
+    .queue-info {
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+    }
+    
+    .doctor-card.selected .queue-info {
+      border-top: 1px dashed rgba(255,255,255,0.3);
+    }
+    
+    .queue-visualization {
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+    
+    .queue-bar {
+      width: 100%;
+      height: 8px;
+      background-color: rgba(93, 78, 139, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.3rem;
+    }
+    
+    .queue-progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    
+    .queue-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--dark);
+      opacity: 0.7;
+    }
+    
+    .doctor-card.selected .queue-stats {
+      color: white;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .time-slot-visualization {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(93, 78, 139, 0.05);
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .time-slot-visualization h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    
+    .patient-count {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .time-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .time-slot {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      background-color: white;
+      border: 1px solid rgba(93, 78, 139, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .time-slot:hover {
+      background-color: rgba(93, 78, 139, 0.1);
+    }
+    
+    .time-slot.selected {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .time-slot.selected .queue-time {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    .time-slot.selected .queue-time i {
+      color: var(--light);
+    }
+    
+    .time-slot.unavailable {
+      background-color: rgba(255, 0, 0, 0.05);
+      color: #999;
+      border-color: rgba(255, 0, 0, 0.1);
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+    
+    .time-slot.unavailable .queue-time {
+      background-color: rgba(255, 0, 0, 0.05);
+      color: #999;
+    }
+    
+    .time-slot.unavailable .queue-time i {
+      color: #999;
+    }
+    
+    .queue-time {
+      display: inline-flex;
+      align-items: center;
+      background-color: rgba(93, 78, 139, 0.1);
+      color: var(--primary);
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: transform 0.2s ease;
+    }
+    
+    .queue-time i {
+      color: var(--accent);
+      margin-right: 0.2rem;
+      font-size: 0.9rem;
+    }
+    
+    .time-slot:hover .queue-time {
+      transform: scale(1.05);
+    }
+    
+    .confirmation-popup {
+      background-color: #28a745;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    
+    .confirmation-popup h3 {
+      margin-bottom: 10px;
+    }
+    
+    .confirmation-popup p {
+      margin: 5px 0;
+    }
+    
+    .token-section {
+      background: white;
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .token-header {
+      background: linear-gradient(45deg, var(--token), #6bc46d);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 8px;
+      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    }
+    
+    .token-balance {
+      font-size: 2rem;
+      color: var(--token);
+      text-align: center;
+      margin: 1rem 0;
+    }
+    
+    .claimed-balance {
+      font-size: 1.2rem;
+      color: var(--claimed);
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+    
+    .wallet-status {
+      padding: 0.8rem;
+      background: #f0f0f0;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    .user-id {
+      padding: 0.8rem;
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    
+    .token-status {
+      padding: 0.8rem;
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .token-history {
+      margin-top: 1rem;
+    }
+    
+    .token-transaction {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Appointment History Section */
+    .appointment-history-section {
+      background: white;
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+    }
+    
+    .appointment-history-header {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 8px;
+      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    }
+    
+    .appointment-list {
+      margin-top: 1rem;
+    }
+    
+    .appointment-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: #f9f9f9;
+      border-left: 4px solid var(--primary);
+      transition: all 0.3s ease;
+    }
+    
+    .appointment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .appointment-card.pending {
+      border-left-color: var(--warning);
+    }
+    
+    .appointment-card.accepted {
+      border-left-color: var(--success);
+    }
+    
+    .appointment-card.cancelled {
+      border-left-color: var(--danger);
+    }
+    
+    .appointment-info h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    
+    .appointment-info p {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    
+    .appointment-status {
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      text-transform: capitalize;
+      font-size: 0.85rem;
+    }
+    
+    .appointment-status.pending {
+      background: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
+    
+    .appointment-status.accepted {
+      background: rgba(40, 167, 69, 0.1);
+      color: var(--success);
+    }
+    
+    .appointment-status.cancelled {
+      background: rgba(220, 53, 69, 0.1);
+      color: var(--danger);
+    }
+    
+    .no-appointments {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+    }
+    
+    .no-appointments i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+    
+    /* Toast Notification */
+    .toast-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      max-width: 400px;
+    }
+    
+    .toast-notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-notification.error {
+      background: var(--danger);
+    }
+    
+    .toast-notification i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .toast-notification a {
+      color: var(--light);
+      text-decoration: underline;
+      margin-left: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .token-section, .appointment-history-section {
+        order: -1;
+      }
+      .doctor-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .doctor-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+      .time-slots {
+        justify-content: center;
+      }
+      .time-slot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+      .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .appointment-status {
+        margin-top: 0.5rem;
+      }
+      .toast-notification {
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card animate__animated animate__fadeIn">
+      <div class="header">
+        <h2>Book Your Medical Appointment</h2>
+        <p>Experience premium healthcare with our expert specialists</p>
+      </div>
+      
+      <div class="form-container">
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="patientName">Full Name</label>
+            <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="patientEmail">Email Address</label>
+            <input type="email" id="patientEmail" class="form-control" placeholder="Enter your email" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" class="form-control" placeholder="Enter your phone number" required />
+          </div>
+          
+          <div class="form-group">
+            <label>Select Your Specialist</label>
+            <div id="doctorCardsContainer" class="animate__animated animate__fadeIn">
+              <div class="loading-doctors" style="text-align: center; padding: 2rem;">
+                <div class="loading"></div>
+                <p>Loading doctors...</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="appointmentDate">Preferred Date</label>
+            <input type="date" id="appointmentDate" class="form-control" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="appointmentTime">Preferred Time</label>
+            <div class="select-wrapper">
+              <select id="appointmentTime" class="form-control" required>
+                <option value="">Select a time</option>
+                <option value="09:00-10:00">09:00-10:00 AM</option>
+                <option value="10:00-11:00">10:00-11:00 AM</option>
+                <option value="11:00-12:00">11:00-12:00 AM</option>
+                <option value="13:00-14:00">01:00-02:00 PM</option>
+                <option value="14:00-15:00">02:00-03:00 PM</option>
+                <option value="15:00-16:00">03:00-04:00 PM</option>
+                <option value="16:00-17:00">04:00-05:00 PM</option>
+              </select>
+            </div>
+            <div class="time-slot-visualization" id="timeSlotVisualization" style="display: none;">
+              <span id="totalPatientCount" class="patient-count"></span>
+              <h4>Available Time Slots</h4>
+              <div class="time-slots" id="timeSlotsContainer"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="specialRequests">Special Requests</label>
+            <textarea id="specialRequests" class="form-control" rows="3" placeholder="Any special requirements or notes"></textarea>
+          </div>
+          
+          <button type="submit" class="btn animate__animated animate__pulse animate__infinite animate__slower" id="submitBtn">
+            <i class="fas fa-calendar-check"></i> Confirm Appointment
+          </button>
+        </form>
+      </div>
+      
+      <!-- Appointment History Section -->
+      <div class="appointment-history-section animate__animated animate__fadeIn">
+        <div class="appointment-history-header">
+          <h3>Your Appointments</h3>
+        </div>
+        <div class="appointment-list" id="appointmentHistory">
+          <div class="no-appointments">
+            <i class="fas fa-calendar-plus"></i>
+            <p>Enter your email to view appointments</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="token-section">
+      <div class="token-header">
+        <h3>HealthToken Rewards</h3>
+      </div>
+      <div class="token-balance" id="tokenBalance">0 HLTH</div>
+      <div class="claimed-balance" id="claimedBalance">0 HLTH Claimed</div>
+      <div class="wallet-status" id="walletStatus">Wallet not connected</div>
+      <div class="form-group" id="userIdGroup" style="display: none;">
+        <label for="userIdInput">Enter Your User ID</label>
+        <input type="text" id="userIdInput" class="form-control" placeholder="e.g., ABC123" />
+        <button id="loadTokenBtn" class="btn" style="margin-top: 0.5rem;">
+          <i class="fas fa-sync"></i> Load Token Details
+        </button>
+      </div>
+      <button id="connectBtn" class="btn">
+        <i class="fas fa-wallet"></i> Connect Wallet
+      </button>
+      <button id="rewardBtn" class="btn" disabled>
+        <i class="fas fa-gift"></i> Claim 10 HLTH
+      </button>
+      <div class="token-status" id="rewardStatus">Book to earn tokens</div>
+      <div class="token-history">
+        <h4>Transaction History</h4>
+        <div id="transactionHistory"></div>
+      </div>
+    </div>
+    
+    <div id="confirmation-container"></div>
+  </div>
+  
+  <div class="floating-elements">
+    <div class="floating-element" style="width: 100px; height: 100px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-element" style="width: 150px; height: 150px; top: 60%; left: 80%; animation-delay: 2s;"></div>
+    <div class="floating-element" style="width: 80px; height: 80px; top: 30%; left: 70%; animation-delay: 4s;"></div>
+    <div class="floating-element" style="width: 120px; height: 120px; top: 80%; left: 20%; animation-delay: 6s;"></div>
+  </div>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+      authDomain: "medisphere-d2f5c.firebaseapp.com",
+      projectId: "medisphere-d2f5c",
+      storageBucket: "medisphere-d2f5c.appspot.com",
+      messagingSenderId: "947510967858",
+      appId: "1:947510967858:web:8aa2450cb433be8fe7c62b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const doctorCardsContainer = document.getElementById('doctorCardsContainer');
+    const appointmentForm = document.getElementById('appointmentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const appointmentDate = document.getElementById('appointmentDate');
+    const appointmentTime = document.getElementById('appointmentTime');
+    const timeSlotVisualization = document.getElementById('timeSlotVisualization');
+    const timeSlotsContainer = document.getElementById('timeSlotsContainer');
+    const totalPatientCount = document.getElementById('totalPatientCount');
+    const confirmationContainer = document.getElementById('confirmation-container');
+    const connectBtn = document.getElementById('connectBtn');
+    const walletStatus = document.getElementById('walletStatus');
+    const userIdGroup = document.getElementById('userIdGroup');
+    const userIdInput = document.getElementById('userIdInput');
+    const loadTokenBtn = document.getElementById('loadTokenBtn');
+    const rewardBtn = document.getElementById('rewardBtn');
+    const rewardStatus = document.getElementById('rewardStatus');
+    const tokenBalance = document.getElementById('tokenBalance');
+    const claimedBalance = document.getElementById('claimedBalance');
+    const transactionHistory = document.getElementById('transactionHistory');
+    const patientEmailInput = document.getElementById('patientEmail');
+    const appointmentHistory = document.getElementById('appointmentHistory');
+
+    let selectedDoctor = null;
+    const doctorMap = {};
+    const doctorAppointments = {};
+    const doctorAvailability = {};
+
+    // Token System Variables
+    let simulatedBalance = 0;
+    let claimedTokens = 0;
+    let transactions = [];
+    let walletAddress = null;
+    let userId = null;
+
+    // Generate a simple 6-character alphanumeric user ID
+    function generateUserId() {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for (let i = 0; i < 6; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+
+    async function loadTokenDetailsByUserId() {
+      const inputUserId = userIdInput.value.trim();
+      if (!inputUserId) {
+        showToast('Please enter a valid User ID.', 'error');
+        return;
+      }
+
+      try {
+        const querySnapshot = await db.collection("users").where("userId", "==", inputUserId).get();
+        if (querySnapshot.empty) {
+          showToast('No user found with the provided User ID. Creating new account.', 'error');
+          userId = inputUserId;
+          walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+          await db.collection("users").doc(walletAddress).set({
+            userId: userId,
+            walletAddress: walletAddress,
+            balance: 0,
+            claimed: 0,
+            transactions: [],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          walletStatus.textContent = `Connected: ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+          connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
+          connectBtn.disabled = true;
+        } else {
+          const doc = querySnapshot.docs[0];
+          walletAddress = doc.id;
+          const data = doc.data();
+          userId = data.userId;
+          simulatedBalance = data.balance || 0;
+          claimedTokens = data.claimed || 0;
+          transactions = data.transactions || [];
+          walletStatus.textContent = `Connected: ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+          connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
+          connectBtn.disabled = true;
+        }
+        updateTokenBalance();
+        updateClaimedBalance();
+        updateTransactionHistory();
+        updateRewardButton();
+      } catch (error) {
+        console.error('Error loading token details:', error);
+        showToast('Error loading token details. Please try again.', 'error');
+      }
+    }
+
+    // Token Functions
+    function generateFakeTxHash() {
+      return '0x' + Array(64).fill().map(() => Math.random().toString(16)[2]).join('');
+    }
+
+    async function loadUserData() {
+      if (!walletAddress && !userIdInput.value.trim()) return;
+      try {
+        if (userIdInput.value.trim()) {
+          await loadTokenDetailsByUserId();
+          return;
+        }
+        const userDoc = await db.collection("users").doc(walletAddress).get();
+        if (userDoc.exists) {
+          const data = userDoc.data();
+          userId = data.userId || null;
+          simulatedBalance = data.balance || 0;
+          claimedTokens = data.claimed || 0;
+          transactions = data.transactions || [];
+        } else if (userId) {
+          await db.collection("users").doc(walletAddress).set({
+            userId: userId,
+            walletAddress: walletAddress,
+            balance: 0,
+            claimed: 0,
+            transactions: [],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        updateTokenBalance();
+        updateClaimedBalance();
+        updateTransactionHistory();
+        updateRewardButton();
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        showToast('Error loading user data.', 'error');
+      }
+    }
+
+    async function saveUserData() {
+      if (!walletAddress || !userId) return;
+      try {
+        await db.collection("users").doc(walletAddress).set({
+          userId: userId,
+          walletAddress: walletAddress,
+          balance: simulatedBalance,
+          claimed: claimedTokens,
+          transactions: transactions,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      } catch (error) {
+        console.error('Error saving user data:', error);
+        showToast('Error saving user data.', 'error');
+      }
+    }
+
+    function updateTokenBalance() {
+      tokenBalance.textContent = `${simulatedBalance} HLTH`;
+    }
+
+    function updateClaimedBalance() {
+      claimedBalance.textContent = `${claimedTokens} HLTH Claimed`;
+    }
+
+    function updateRewardButton() {
+      rewardBtn.disabled = simulatedBalance < 10;
+      rewardStatus.textContent = simulatedBalance >= 10 ? `Ready to claim ${simulatedBalance} HLTH` : 'Book to earn tokens';
+    }
+
+    function updateTransactionHistory() {
+      transactionHistory.innerHTML = transactions.length === 0 ? '<p>No transactions</p>' : '';
+      transactions.slice().reverse().forEach(tx => {
+        const div = document.createElement('div');
+        div.className = 'token-transaction';
+        div.innerHTML = `
+          <div>
+            <span class="amount">${tx.type === 'Claim' ? '🔴' : '✅'} ${tx.amount} HLTH (${tx.type})</span>
+            <div class="date">${tx.timestamp}</div>
+          </div>
+          <div class="tx">${tx.tx.slice(0,6)}...${tx.tx.slice(-4)}</div>
+        `;
+        transactionHistory.appendChild(div);
+      });
+    }
+
+    // Wallet Connection
+    connectBtn.addEventListener('click', () => {
+      setTimeout(() => {
+        walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+        walletStatus.textContent = `Connected: ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+        connectBtn.innerHTML = '<i class="fas fa-check-circle"></i> Connected';
+        connectBtn.disabled = true;
+        userIdGroup.style.display = 'block';
+        loadTokenBtn.disabled = false;
+      }, 500);
+    });
+
+    // Load Token Details by User ID
+    loadTokenBtn.addEventListener('click', async () => {
+      await loadTokenDetailsByUserId();
+    });
+
+    userIdInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        loadTokenDetailsByUserId();
+      }
+    });
+
+    // Claim Tokens
+    rewardBtn.addEventListener('click', async () => {
+      if (simulatedBalance < 10) {
+        showToast('Not enough tokens. Book more appointments!', 'error');
+        return;
+      }
+      const fakeTxHash = generateFakeTxHash();
+      rewardStatus.textContent = `⏳ Claiming... TX: ${fakeTxHash}`;
+      rewardBtn.disabled = true;
+
+      transactions.push({
+        tx: fakeTxHash,
+        amount: '-10',
+        status: 'Confirmed',
+        timestamp: new Date().toLocaleString(),
+        type: 'Claim'
+      });
+
+      setTimeout(async () => {
+        simulatedBalance -= 10;
+        claimedTokens += 10;
+        rewardStatus.textContent = `✅ 10 HLTH Claimed!`;
+        updateTokenBalance();
+        updateClaimedBalance();
+        updateTransactionHistory();
+        await saveUserData();
+        updateRewardButton();
+      }, 2000);
+    });
+
+    // Doctor Loading and Display
+    function loadDoctors() {
+      db.collection("doctor_registrations").get()
+        .then((querySnapshot) => {
+          doctorCardsContainer.innerHTML = '';
+          
+          if (querySnapshot.empty) {
+            doctorCardsContainer.innerHTML = '<p style="text-align: center; color: var(--accent);">No doctors available at this time.</p>';
+            return;
+          }
+          
+          const doctors = [];
+          querySnapshot.forEach((doc) => {
+            const doctor = doc.data();
+            doctor.id = doc.id;
+            doctors.push(doctor);
+            if (doctor.workingHours) {
+              doctorAvailability[doctor.id] = doctor.workingHours;
+            }
+          });
+          
+          const today = new Date().toISOString().split('T')[0];
+          const promises = doctors.map(doctor => {
+            return db.collection("appointments")
+              .where("doctorId", "==", doctor.id)
+              .where("date", "==", today)
+              .where("status", "in", ["pending", "confirmed"])
+              .get()
+              .then(snap => {
+                doctorAppointments[doctor.id] = snap.size;
+                return doctor;
+              });
+          });
+          
+          Promise.all(promises).then(doctorsWithCounts => {
+            displayDoctors(doctorsWithCounts);
+          });
+        })
+        .catch((error) => {
+          console.error("Error loading doctors: ", error);
+          doctorCardsContainer.innerHTML = '<p style="text-align: center; color: red;">Error loading doctors. Please refresh the page.</p>';
+          showToast('Error loading doctors. Please try again.', 'error');
+        });
+    }
+
+    function displayDoctors(doctors) {
+      doctorCardsContainer.innerHTML = '';
+      
+      doctors.forEach((doctor, index) => {
+        doctorMap[doctor.id] = doctor;
+        
+        const card = document.createElement('div');
+        card.className = 'doctor-card animate__animated animate__fadeIn';
+        card.dataset.id = doctor.id;
+        
+        // Use LEGO doctor images
+        const legoImageIndex = (index % 10) + 1; // Use numbers 1 to 10 for LEGO images
+        const legoImage = `https://randomuser.me/api/portraits/lego/${legoImageIndex}.jpg`;
+        const waitTime = doctorAppointments[doctor.id] * 15; // 15 minutes per patient
+        const hours = Math.floor(waitTime / 60);
+        const minutes = waitTime % 60;
+        let waitTimeText = "No wait time";
+        if (waitTime > 0) {
+          waitTimeText = `Estimated wait: ${hours > 0 ? hours + "h " : ""}${minutes}m`;
+        }
+        const queuePercentage = Math.min(doctorAppointments[doctor.id] * 5, 100); // Adjusted for 4 patients per slot
+        
+        card.innerHTML = `
+          <img src="${legoImage}" 
+               alt="${doctor.name}" 
+               class="doctor-avatar">
+          <div class="doctor-info">
+            <h4>${doctor.name}</h4>
+            <p>${doctor.specialization} • ${doctor.experience || '10+'} years experience</p>
+            <p><i class="fas fa-star" style="color: var(--accent);"></i> ${doctor.rating || '4.8'}/5.0</p>
+            <div class="queue-visualization">
+              <div class="queue-bar">
+                <div class="queue-progress" style="width: ${queuePercentage}%"></div>
+              </div>
+              <div class="queue-stats">
+                <span><i class="fas fa-users"></i> ${doctorAppointments[doctor.id] || 0} in queue</span>
+                <span>${waitTimeText}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        doctorCardsContainer.appendChild(card);
+        
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedDoctor = doctor.id;
+          loadAvailableTimeSlots();
+        });
+      });
+    }
+
+    async function getPatientCountPerSlot(doctorId, date, timeSlots) {
+      const patientCounts = {};
+      const queueTimes = {};
+      let totalPatients = 0;
+      
+      timeSlots.forEach(slot => {
+        patientCounts[slot] = 0;
+        queueTimes[slot] = 0;
+      });
+      
+      const snapshot = await db.collection("appointments")
+        .where("doctorId", "==", doctorId)
+        .where("date", "==", date)
+        .where("status", "in", ["pending", "confirmed"])
+        .get();
+      
+      let cumulativePatients = 0;
+      const sortedAppointments = snapshot.docs
+        .map(doc => doc.data())
+        .sort((a, b) => a.time.localeCompare(b.time));
+      
+      for (const appointment of sortedAppointments) {
+        const time = appointment.time;
+        const slot = timeSlots.find(slot => slot.startsWith(time));
+        if (slot) {
+          patientCounts[slot] += 1;
+          totalPatients += 1;
+          cumulativePatients += 1;
+          queueTimes[slot] = patientCounts[slot] * 15; // Wait time based on patients in this slot
+        }
+      }
+      
+      for (const slot of timeSlots) {
+        if (patientCounts[slot] === 0) {
+          queueTimes[slot] = 0;
+        }
+        const slotHour = parseInt(slot.split('-')[0].split(':')[0]);
+        if (slotHour >= 12 && slotHour < 13) {
+          cumulativePatients = 0;
+        }
+      }
+      
+      return { patientCounts, queueTimes, totalPatients };
+    }
+
+    async function loadAvailableTimeSlots() {
+      if (!selectedDoctor || !appointmentDate.value) {
+        timeSlotVisualization.style.display = 'none';
+        totalPatientCount.textContent = '';
+        return;
+      }
+      
+      const workingHours = doctorAvailability[selectedDoctor] || { 
+        start: "09:00", 
+        end: "17:00",
+        lunchStart: "12:00",
+        lunchEnd: "13:00"
+      };
+      
+      const timeSlots = generateTimeSlots(workingHours);
+      
+      const { patientCounts, queueTimes, totalPatients } = await getPatientCountPerSlot(selectedDoctor, appointmentDate.value, timeSlots);
+      const bookedSlots = Object.keys(patientCounts).filter(slot => patientCounts[slot] >= 4);
+      
+      totalPatientCount.textContent = `${totalPatients} patient${totalPatients !== 1 ? 's' : ''}`;
+      displayTimeSlots(timeSlots, bookedSlots, patientCounts, queueTimes);
+    }
+
+    function generateTimeSlots(workingHours) {
+      const timeSlots = [];
+      const start = workingHours.start.split(":");
+      const end = workingHours.end.split(":");
+      const lunchStart = workingHours.lunchStart.split(":");
+      const lunchEnd = workingHours.lunchEnd.split(":");
+      
+      const startHour = parseInt(start[0]);
+      const endHour = parseInt(end[0]);
+      const lunchStartHour = parseInt(lunchStart[0]);
+      const lunchEndHour = parseInt(lunchEnd[0]);
+      
+      let currentHour = startHour;
+      
+      while (currentHour < endHour) {
+        const startTime = `${currentHour.toString().padStart(2, '0')}:00`;
+        const endTime = `${(currentHour + 1).toString().padStart(2, '0')}:00`;
+        const timeSlot = `${startTime}-${endTime}`;
+        
+        if (currentHour >= lunchStartHour && currentHour < lunchEndHour) {
+          currentHour++;
+          continue;
+        }
+        
+        timeSlots.push(timeSlot);
+        currentHour++;
+      }
+      
+      return timeSlots;
+    }
+
+    function displayTimeSlots(timeSlots, bookedSlots, patientCounts, queueTimes) {
+      timeSlotsContainer.innerHTML = '';
+      
+      timeSlots.forEach(slot => {
+        const slotDiv = document.createElement('div');
+        slotDiv.className = 'time-slot';
+        
+        const patientCount = patientCounts[slot] || 0;
+        const queueTime = queueTimes[slot] || 0;
+        const hours = Math.floor(queueTime / 60);
+        const minutes = queueTime % 60;
+        const queueText = queueTime > 0 ? `${hours > 0 ? hours + "h " : ""}${minutes}m` : "0m";
+        
+        if (bookedSlots.includes(slot)) {
+          slotDiv.classList.add('unavailable');
+          slotDiv.innerHTML = `
+            ${slot} - Unavailable (${patientCount} patient${patientCount !== 1 ? 's' : ''})
+            <span class="queue-time"><i class="fas fa-clock"></i> ${queueText}</span>
+          `;
+        } else {
+          slotDiv.classList.add('available');
+          slotDiv.innerHTML = `
+            ${slot} - Available (${patientCount} patient${patientCount !== 1 ? 's' : ''})
+            <span class="queue-time"><i class="fas fa-clock"></i> ${queueText}</span>
+          `;
+          slotDiv.addEventListener('click', () => {
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            slotDiv.classList.add('selected');
+            appointmentTime.value = slot;
+          });
+        }
+        
+        timeSlotsContainer.appendChild(slotDiv);
+      });
+      
+      timeSlotVisualization.style.display = 'block';
+    }
+
+    function displayConfirmationMessage(doctorName, doctorId, appointmentTime, appointmentDate) {
+      const confirmationMessage = `
+        <div class="confirmation-popup animate__animated animate__fadeIn">
+          <h3>Thanks for Booking!</h3>
+          <p>You have successfully booked an appointment with Dr. ${doctorName}.</p>
+          <p>Doctor ID: ${doctorId}</p>
+          <p>Appointment Date: ${appointmentDate}</p>
+          <p>Appointment Time: ${appointmentTime}</p>
+          <p>Earned 10 HLTH Tokens!</p>
+        </div>
+      `;
+      
+      confirmationContainer.innerHTML = confirmationMessage;
+      setTimeout(() => {
+        confirmationContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    function updateDoctorQueueTime(doctorId) {
+      const today = new Date().toISOString().split('T')[0];
+      
+      db.collection("appointments")
+        .where("doctorId", "==", doctorId)
+        .where("date", "==", today)
+        .where("status", "in", ["pending", "confirmed"])
+        .get()
+        .then(snapshot => {
+          const appointmentCount = snapshot.size;
+          doctorAppointments[doctorId] = appointmentCount;
+          
+          updateAllDoctorCards();
+        })
+        .catch(error => {
+          console.error("Error updating queue time:", error);
+          showToast('Error updating queue time.', 'error');
+        });
+    }
+
+    function updateAllDoctorCards() {
+      const cards = document.querySelectorAll('.doctor-card');
+      cards.forEach(card => {
+        const doctorId = card.dataset.id;
+        const appointmentCount = doctorAppointments[doctorId] || 0;
+        const waitTime = appointmentCount * 15; // 15 minutes per patient
+        const hours = Math.floor(waitTime / 60);
+        const minutes = waitTime % 60;
+        const queuePercentage = Math.min(appointmentCount * 5, 100); // Adjusted for 4 patients per slot
+        
+        const queueCountElement = card.querySelector('.queue-stats span:first-child');
+        const waitTimeElement = card.querySelector('.queue-stats span:last-child');
+        const queueProgressElement = card.querySelector('.queue-progress');
+        
+        if (queueCountElement && waitTimeElement && queueProgressElement) {
+          queueCountElement.innerHTML = `<i class="fas fa-users"></i> ${appointmentCount} in queue`;
+          waitTimeElement.textContent = waitTime > 0 
+            ? `Estimated wait: ${hours > 0 ? hours + "h " : ""}${minutes}m`
+            : "No wait time";
+          queueProgressElement.style.width = `${queuePercentage}%`;
+        }
+      });
+    }
+
+    // Toast Notification Function
+    function showToast(message, type, link = null) {
+      const toast = document.createElement('div');
+      toast.className = `toast-notification ${type}`;
+      toast.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i><span>${message}${link ? `<a href="${link}" target="_blank">Create Index</a>` : ''}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => toast.remove(), 5000);
+    }
+
+    // Appointment History Functions
+    function loadAppointmentHistory(patientEmail) {
+      console.log('Loading appointment history for:', patientEmail);
+      if (!patientEmail) {
+        console.log('No patient email provided');
+        appointmentHistory.innerHTML = `
+          <div class="no-appointments">
+            <i class="fas fa-calendar-plus"></i>
+            <p>Please enter your email to view appointments</p>
+          </div>
+        `;
+        return;
+      }
+
+      appointmentHistory.innerHTML = `
+        <div class="no-appointments">
+          <div class="loading"></div>
+          <p>Loading appointments...</p>
+        </div>
+      `;
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(patientEmail)) {
+        console.log('Invalid email format:', patientEmail);
+        appointmentHistory.innerHTML = `
+          <div class="no-appointments">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Please enter a valid email address</p>
+          </div>
+        `;
+        showToast('Please enter a valid email address.', 'error');
+        return;
+      }
+
+      const appointQuery = db.collection("appointments")
+        .where("patientEmail", "==", patientEmail);
+
+      appointQuery.onSnapshot((snapshot) => {
+        console.log('Appointment snapshot received:', snapshot.size, 'documents');
+        appointmentHistory.innerHTML = '';
+
+        if (snapshot.empty) {
+          console.log('No appointments found for:', patientEmail);
+          appointmentHistory.innerHTML = `
+            <div class="no-appointments">
+              <i class="fas fa-calendar-plus"></i>
+              <p>No appointments booked yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          console.log('Appointment data:', data);
+
+          // Handle custom date format "27.02.5" by converting to "2025-02-27"
+          let formattedDate = 'N/A';
+          if (data.date) {
+            if (data.date.match(/^\d{2}\.\d{2}\.\d$/)) {
+              const [day, month, year] = data.date.split('.');
+              const fullYear = `20${year}`; // Assuming "5" means "2025"
+              formattedDate = new Date(`${fullYear}-${month}-${day}`).toLocaleDateString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              });
+            } else {
+              formattedDate = new Date(data.date).toLocaleDateString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              });
+            }
+          }
+
+          // Only proceed if doctorId exists in doctorMap
+          if (data.doctorId && doctorMap[data.doctorId]) {
+            const doctor = doctorMap[data.doctorId];
+            const status = data.status || 'pending'; // Fallback to 'pending' if status is missing
+            const card = document.createElement('div');
+            card.className = `appointment-card ${status} animate__animated animate__fadeIn`;
+            card.innerHTML = `
+              <div class="appointment-info">
+                <h4>Dr. ${doctor.name}</h4>
+                <p>${doctor.specialization} | ${formattedDate} at ${data.time || 'N/A'}</p>
+              </div>
+              <div class="appointment-status ${status}">
+                ${status.charAt(0).toUpperCase() + status.slice(1)}
+              </div>
+            `;
+            appointmentHistory.appendChild(card);
+          }
+        });
+      }, (error) => {
+        console.error('Error loading appointments:', error);
+        appointmentHistory.innerHTML = `
+          <div class="no-appointments">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Error loading appointments</p>
+          </div>
+        `;
+        if (error.message.includes('The query requires an index')) {
+          const indexUrlMatch = error.message.match(/https:\/\/console\.firebase\.google\.com\/[^\s]+/);
+          const indexUrl = indexUrlMatch ? indexUrlMatch[0] : null;
+          showToast('Database index required.', 'error', indexUrl);
+        } else {
+          showToast(`Error loading appointments: ${error.message}`, 'error');
+        }
+      });
+    }
+
+    submitBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+      submitBtn.disabled = true;
+      
+      const patientName = document.getElementById('patientName').value;
+      const patientEmail = document.getElementById('patientEmail').value;
+      const phoneNumber = document.getElementById('phoneNumber').value;
+      const appointmentDateValue = appointmentDate.value;
+      const appointmentTimeValue = appointmentTime.value;
+      const specialRequests = document.getElementById('specialRequests').value;
+      
+      if (!walletStatus.textContent.includes('Connected')) {
+        showToast('Please connect your wallet!', 'error');
+        submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Appointment';
+        submitBtn.disabled = false;
+        return;
+      }
+
+      if (!selectedDoctor || !appointmentDateValue || !appointmentTimeValue) {
+        showToast('Please select a doctor, date, and time.', 'error');
+        submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Appointment';
+        submitBtn.disabled = false;
+        return;
+      }
+      
+      try {
+        const slotSnapshot = await db.collection("appointments")
+          .where("doctorId", "==", selectedDoctor)
+          .where("date", "==", appointmentDateValue)
+          .where("time", "==", appointmentTimeValue.split('-')[0])
+          .where("status", "in", ["pending", "confirmed"])
+          .get();
+        
+        if (slotSnapshot.size >= 4) {
+          showToast('This time slot is fully booked. Please choose another time.', 'error');
+          submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Appointment';
+          submitBtn.disabled = false;
+          return;
+        }
+        
+        await db.collection("appointments").add({
+          doctorId: selectedDoctor,
+          patientName,
+          patientEmail,
+          phoneNumber,
+          date: appointmentDateValue,
+          time: appointmentTimeValue.split('-')[0], // Store start time
+          specialRequests,
+          walletAddress,
+          userId: userId,
+          status: "pending",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        const doctor = doctorMap[selectedDoctor];
+        displayConfirmationMessage(
+          doctor.name,
+          selectedDoctor,
+          appointmentTimeValue,
+          appointmentDateValue
+        );
+
+        // Award tokens
+        const fakeTxHash = generateFakeTxHash();
+        rewardStatus.textContent = `⏳ Earning... TX: ${fakeTxHash}`;
+        transactions.push({
+          tx: fakeTxHash,
+          amount: '+10',
+          status: 'Confirmed',
+          timestamp: new Date().toLocaleString(),
+          type: 'Appointment'
+        });
+
+        setTimeout(async () => {
+          simulatedBalance += 10;
+          rewardStatus.textContent = `✅ 10 HLTH Earned!`;
+          updateTokenBalance();
+          updateTransactionHistory();
+          await saveUserData();
+          updateRewardButton();
+        }, 2000);
+        
+        updateDoctorQueueTime(selectedDoctor);
+        appointmentForm.reset();
+        selectedDoctor = null;
+        document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+        timeSlotVisualization.style.display = 'none';
+        totalPatientCount.textContent = '';
+        
+        // Load appointment history after booking
+        loadAppointmentHistory(patientEmail);
+        
+        submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Appointment';
+        submitBtn.disabled = false;
+      } catch (error) {
+        console.error("Error booking appointment:", error);
+        showToast('Error booking appointment. Please try again.', 'error');
+        submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Confirm Appointment';
+        submitBtn.disabled = false;
+      }
+    });
+
+    appointmentDate.addEventListener('change', () => {
+      loadAvailableTimeSlots();
+    });
+
+    appointmentTime.addEventListener('change', () => {
+      // No additional logic needed since timeSlotInfo is removed
+    });
+
+    // Load appointment history when email changes
+    patientEmailInput.addEventListener('change', () => {
+      const email = patientEmailInput.value.trim();
+      console.log('Email changed, loading appointment history for:', email);
+      loadAppointmentHistory(email);
+    });
+
+    loadDoctors();
+  </script>
+</body>
+</html>

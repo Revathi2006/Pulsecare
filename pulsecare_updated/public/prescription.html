@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseCare - My Prescriptions</title>
+    <!-- Firebase SDK with Messaging -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .header h1 i {
+            margin-right: 10px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* Add Prescription Card */
+        .add-prescription-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .add-prescription-card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Medicine Entry */
+        .medicine-entry {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            border-left: 4px solid #667eea;
+        }
+
+        .remove-medicine {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .remove-medicine:hover {
+            background: #ff3344;
+            transform: scale(1.1);
+        }
+
+        .add-medicine-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .add-medicine-btn:hover {
+            background: #218838;
+        }
+
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        /* Prescriptions List */
+        .prescriptions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .prescription-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            position: relative;
+            border-top: 4px solid #667eea;
+        }
+
+        .prescription-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .doctor-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .prescription-date {
+            color: #666;
+            font-size: 14px;
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .prescription-hospital {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .medicines-list {
+            margin: 15px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .medicine-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #667eea;
+        }
+
+        .medicine-info {
+            flex: 1;
+        }
+
+        .medicine-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .medicine-dosage {
+            color: #28a745;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .medicine-timing {
+            color: #667eea;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .medicine-timing i {
+            margin-right: 4px;
+        }
+
+        .reminder-toggle {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reminder-toggle.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .reminder-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .prescription-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .delete-btn {
+            color: #ff4757;
+        }
+
+        .reminder-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state .add-first-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .empty-state .add-first-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ff4757;
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .notification.success i {
+            color: #28a745;
+        }
+
+        .notification.error i {
+            color: #ff4757;
+        }
+
+        /* Active Reminders Bar */
+        .active-reminders-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+        }
+
+        .reminder-count {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reminder-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .reminder-tag {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reminder-tag i {
+            color: #ffc107;
+        }
+
+        /* Permission Banner */
+        .permission-banner {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .permission-banner i {
+            font-size: 24px;
+            color: #2196f3;
+        }
+
+        .permission-text {
+            flex: 1;
+        }
+
+        .permission-text h4 {
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .permission-text p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .allow-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .allow-btn:hover {
+            background: #1976d2;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .prescriptions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-prescription"></i> My Prescriptions</h1>
+            <div class="header-buttons">
+                <!-- Back button - ALWAYS goes to patient dashboard -->
+                <a href="user dashboard.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Permission Banner -->
+      
+        <!-- Active Reminders Bar -->
+        <div id="activeRemindersBar" class="active-reminders-bar" style="display: none;">
+            <div class="reminder-count">
+                <i class="fas fa-bell"></i> <span id="reminderCount">0</span> Active Reminders
+            </div>
+            <div id="reminderTags" class="reminder-list"></div>
+        </div>
+
+        <!-- Add Prescription Form -->
+        <div class="add-prescription-card">
+            <h2><i class="fas fa-plus-circle"></i> Add New Prescription</h2>
+            <form id="prescriptionForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user-md"></i> Doctor's Name</label>
+                    <input type="text" id="doctorName" placeholder="Dr. John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-hospital"></i> Hospital/Clinic</label>
+                    <input type="text" id="hospital" placeholder="City Hospital" required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Prescription Date</label>
+                    <input type="date" id="prescriptionDate" required>
+                </div>
+
+                <div id="medicinesContainer">
+                    <div class="medicine-entry">
+                        <button type="button" class="remove-medicine" onclick="removeMedicine(this)">×</button>
+                        <div class="form-group">
+                            <label>Medicine Name</label>
+                            <input type="text" class="medicineName" placeholder="Paracetamol" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Dosage</label>
+                            <input type="text" class="dosage" placeholder="500mg" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Frequency</label>
+                            <select class="frequency" required>
+                                <option value="Once daily">Once daily</option>
+                                <option value="Twice daily">Twice daily</option>
+                                <option value="Three times daily">Three times daily</option>
+                                <option value="Four times daily">Four times daily</option>
+                                <option value="Every 6 hours">Every 6 hours</option>
+                                <option value="Every 8 hours">Every 8 hours</option>
+                                <option value="As needed">As needed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Timing</label>
+                            <select class="timing" required>
+                                <option value="Before food">Before food</option>
+                                <option value="After food">After food</option>
+                                <option value="Empty stomach">Empty stomach</option>
+                                <option value="With food">With food</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (days)</label>
+                            <input type="number" class="duration" min="1" value="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reminder Time</label>
+                            <input type="time" class="reminderTime" value="09:00" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="add-medicine-btn" onclick="addMedicine()">
+                    <i class="fas fa-plus"></i> Add Another Medicine
+                </button>
+
+                <div class="form-group">
+                    <label><i class="fas fa-sticky-note"></i> Additional Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Any special instructions..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> Save Prescription
+                </button>
+            </form>
+        </div>
+
+        <!-- My Prescriptions List -->
+        <h2 style="color: white; margin-bottom: 20px;">
+            <i class="fas fa-history"></i> My Prescription History
+        </h2>
+        
+        <div id="prescriptionsList" class="prescriptions-grid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlziiqR8t4tgkyj0mjcqs27uA1Vt4lXO0",
+            authDomain: "medisphere-d2f5c.firebaseapp.com",
+            projectId: "medisphere-d2f5c",
+            storageBucket: "medisphere-d2f5c.appspot.com",
+            messagingSenderId: "947510967858",
+            appId: "1:947510967858:web:8aa2450cb433be8fe7c62b"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        let messaging = null;
+
+        // Set today's date as default
+        document.getElementById('prescriptionDate').valueAsDate = new Date();
+
+        let currentUser = null;
+        let activeReminders = [];
+
+        // Check authentication
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                loadPrescriptions();
+                initMessaging();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Initialize Firebase Cloud Messaging
+        async function initMessaging() {
+            try {
+                messaging = firebase.messaging();
+                
+                // Check if already has permission
+                if (Notification.permission === 'granted') {
+                    document.getElementById('permissionBanner').style.display = 'none';
+                    await getFCMToken();
+                }
+            } catch (error) {
+                console.log('Messaging not supported:', error);
+            }
+        }
+
+        // Request notification permission
+        async function requestNotificationPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    document.getElementById('permissionBanner').style.display = 'none';
+                    showNotification('✅ Notifications enabled! You will receive reminders even when app is closed.', 'success');
+                    
+                    // Get FCM token
+                    await getFCMToken();
+                    
+                    // Save token to Firestore
+                    if (currentUser) {
+                        await db.collection('fcm_tokens').doc(currentUser.uid).set({
+                            token: token,
+                            userId: currentUser.uid,
+                            updatedAt: new Date()
+                        }, { merge: true });
+                    }
+                } else {
+                    showNotification('❌ Please allow notifications for medicine reminders', 'error');
+                }
+            } catch (error) {
+                console.error('Error requesting permission:', error);
+            }
+        }
+
+        // Get FCM token - UPDATED WITH YOUR VAPID KEY
+        async function getFCMToken() {
+            try {
+                if (!messaging) return null;
+                
+                // ✅ YOUR VAPID KEY IS INSERTED HERE
+                const token = await messaging.getToken({
+                    vapidKey: 'BPWpKIF39BDNpWK36aRa6qOpjKB_V6bCGm9XKDJ9jrnOqK6Daru_L5t-MiTymxyQ1NNsAkN7tVnJVEAg1-BfPq0'
+                });
+                
+                if (token) {
+                    console.log('✅ FCM Token obtained successfully:', token);
+                    
+                    // Save token to Firestore
+                    if (currentUser) {
+                        await db.collection('fcm_tokens').doc(currentUser.uid).set({
+                            token: token,
+                            userId: currentUser.uid,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                    }
+                    
+                    return token;
+                }
+            } catch (error) {
+                console.error('❌ Error getting token:', error);
+                // Common error: FCM API not enabled
+                if (error.code === 'messaging/failed-service-worker-registration') {
+                    showNotification('⚠️ Please enable FCM API in Google Cloud Console', 'error');
+                }
+                return null;
+            }
+        }
+
+        // Handle foreground messages
+        if (messaging) {
+            messaging.onMessage((payload) => {
+                console.log('📱 Foreground message received:', payload);
+                
+                // Show notification when app is open
+                if (Notification.permission === 'granted') {
+                    new Notification(payload.notification?.title || '💊 Medicine Reminder', {
+                        body: payload.notification?.body || 'Time to take medicine!',
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3004/3004458.png',
+                        vibrate: [200, 100, 200]
+                    });
+                }
+                
+                // Also show in-app notification
+                showNotification(payload.notification?.body || '⏰ Medicine reminder!', 'success');
+            });
+        }
+
+        // Add medicine field
+        function addMedicine() {
+            const container = document.getElementById('medicinesContainer');
+            const medicineEntry = document.createElement('div');
+            medicineEntry.className = 'medicine-entry';
+            medicineEntry.innerHTML = `
+                <button type="button" class="remove-medicine" onclick="removeMedicine(this)">×</button>
+                <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" class="medicineName" placeholder="Medicine name" required>
+                </div>
+                <div class="form-group">
+                    <label>Dosage</label>
+                    <input type="text" class="dosage" placeholder="e.g., 500mg" required>
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select class="frequency" required>
+                        <option value="Once daily">Once daily</option>
+                        <option value="Twice daily">Twice daily</option>
+                        <option value="Three times daily">Three times daily</option>
+                        <option value="Four times daily">Four times daily</option>
+                        <option value="Every 6 hours">Every 6 hours</option>
+                        <option value="Every 8 hours">Every 8 hours</option>
+                        <option value="As needed">As needed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Timing</label>
+                    <select class="timing" required>
+                        <option value="Before food">Before food</option>
+                        <option value="After food">After food</option>
+                        <option value="Empty stomach">Empty stomach</option>
+                        <option value="With food">With food</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration (days)</label>
+                    <input type="number" class="duration" min="1" value="5" required>
+                </div>
+                <div class="form-group">
+                    <label>Reminder Time</label>
+                    <input type="time" class="reminderTime" value="09:00" required>
+                </div>
+            `;
+            container.appendChild(medicineEntry);
+        }
+
+        // Remove medicine field
+        function removeMedicine(button) {
+            const medicineEntries = document.querySelectorAll('.medicine-entry');
+            if (medicineEntries.length > 1) {
+                button.closest('.medicine-entry').remove();
+            } else {
+                showNotification('At least one medicine is required', 'error');
+            }
+        }
+
+        // Save prescription
+        document.getElementById('prescriptionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+
+            const medicineEntries = document.querySelectorAll('.medicine-entry');
+            const medicines = [];
+
+            for (let entry of medicineEntries) {
+                const medicineName = entry.querySelector('.medicineName').value;
+                const dosage = entry.querySelector('.dosage').value;
+                const frequency = entry.querySelector('.frequency').value;
+                const timing = entry.querySelector('.timing').value;
+                const duration = entry.querySelector('.duration').value;
+                const reminderTime = entry.querySelector('.reminderTime').value;
+
+                if (!medicineName || !dosage) {
+                    showNotification('Please fill all medicine details', 'error');
+                    return;
+                }
+
+                medicines.push({
+                    name: medicineName,
+                    dosage: dosage,
+                    frequency: frequency,
+                    timing: timing,
+                    duration: parseInt(duration),
+                    reminderTime: reminderTime,
+                    remindersEnabled: true,
+                    startDate: new Date().toISOString()
+                });
+            }
+
+            const prescriptionData = {
+                userId: currentUser.uid,
+                doctorName: document.getElementById('doctorName').value,
+                hospital: document.getElementById('hospital').value,
+                date: document.getElementById('prescriptionDate').value,
+                medicines: medicines,
+                notes: document.getElementById('notes').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                prescriptionId: generatePrescriptionId()
+            };
+
+            try {
+                await db.collection('prescriptions').add(prescriptionData);
+                showNotification('✅ Prescription saved! You will receive notifications even when app is closed!', 'success');
+                
+                // Reset form
+                document.getElementById('prescriptionForm').reset();
+                document.getElementById('prescriptionDate').valueAsDate = new Date();
+                
+                // Reset to single medicine entry
+                document.getElementById('medicinesContainer').innerHTML = `
+                    <div class="medicine-entry">
+                        <button type="button" class="remove-medicine" onclick="removeMedicine(this)">×</button>
+                        <div class="form-group">
+                            <label>Medicine Name</label>
+                            <input type="text" class="medicineName" placeholder="Paracetamol" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Dosage</label>
+                            <input type="text" class="dosage" placeholder="500mg" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Frequency</label>
+                            <select class="frequency" required>
+                                <option value="Once daily">Once daily</option>
+                                <option value="Twice daily">Twice daily</option>
+                                <option value="Three times daily">Three times daily</option>
+                                <option value="Four times daily">Four times daily</option>
+                                <option value="Every 6 hours">Every 6 hours</option>
+                                <option value="Every 8 hours">Every 8 hours</option>
+                                <option value="As needed">As needed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Timing</label>
+                            <select class="timing" required>
+                                <option value="Before food">Before food</option>
+                                <option value="After food">After food</option>
+                                <option value="Empty stomach">Empty stomach</option>
+                                <option value="With food">With food</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (days)</label>
+                            <input type="number" class="duration" min="1" value="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reminder Time</label>
+                            <input type="time" class="reminderTime" value="09:00" required>
+                        </div>
+                    </div>
+                `;
+                
+                loadPrescriptions();
+            } catch (error) {
+                console.error('Error saving prescription:', error);
+                showNotification('❌ Error saving prescription', 'error');
+            }
+        });
+
+        // Load prescriptions
+        async function loadPrescriptions() {
+            if (!currentUser) return;
+
+            const prescriptionsList = document.getElementById('prescriptionsList');
+            prescriptionsList.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading your prescriptions...</p>
+                </div>
+            `;
+
+            try {
+                const snapshot = await db.collection('prescriptions')
+                    .where('userId', '==', currentUser.uid)
+                    .get();
+
+                if (snapshot.empty) {
+                    prescriptionsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-prescription-bottle-alt"></i>
+                            <p>No prescriptions yet!</p>
+                            <p style="font-size: 14px; color: #999;">Add your first prescription using the form above</p>
+                            <button class="add-first-btn" onclick="scrollToForm()">
+                                <i class="fas fa-plus"></i> Add Prescription
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let prescriptions = [];
+                snapshot.forEach(doc => {
+                    prescriptions.push({ id: doc.id, ...doc.data() });
+                });
+
+                prescriptions.sort((a, b) => {
+                    if (a.createdAt && b.createdAt) {
+                        return b.createdAt.seconds - a.createdAt.seconds;
+                    }
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+                let html = '';
+                let allMedicines = [];
+                
+                prescriptions.forEach(prescription => {
+                    html += createPrescriptionCard(prescription);
+                    allMedicines = [...allMedicines, ...prescription.medicines];
+                });
+
+                prescriptionsList.innerHTML = html;
+                updateActiveRemindersBar(allMedicines);
+            } catch (error) {
+                console.error('Error loading prescriptions:', error);
+                prescriptionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle" style="color: #ff4757;"></i>
+                        <p>Error loading prescriptions</p>
+                        <p style="font-size: 14px; color: #999;">${error.message}</p>
+                        <button class="add-first-btn" onclick="location.reload()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Create prescription card HTML
+        function createPrescriptionCard(prescription) {
+            const date = new Date(prescription.date).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            const activeReminders = prescription.medicines.filter(m => m.remindersEnabled).length;
+
+            return `
+                <div class="prescription-card" id="presc-${prescription.id}">
+                    ${activeReminders > 0 ? `<div class="reminder-badge">${activeReminders}</div>` : ''}
+                    
+                    <div class="prescription-header">
+                        <span class="doctor-name"><i class="fas fa-user-md"></i> ${prescription.doctorName}</span>
+                        <span class="prescription-date"><i class="fas fa-calendar-alt"></i> ${date}</span>
+                    </div>
+                    
+                    <div class="prescription-hospital">
+                        <i class="fas fa-hospital"></i> ${prescription.hospital}
+                    </div>
+
+                    <div class="medicines-list">
+                        ${prescription.medicines.map(med => `
+                            <div class="medicine-item">
+                                <div class="medicine-info">
+                                    <span class="medicine-name">${med.name}</span>
+                                    <span class="medicine-dosage">${med.dosage}</span>
+                                    <div class="medicine-timing">
+                                        <i class="fas fa-clock"></i> ${med.timing} • ${med.frequency}
+                                        <br><small><i class="fas fa-bell"></i> ${med.reminderTime}</small>
+                                    </div>
+                                </div>
+                                <button class="reminder-toggle ${med.remindersEnabled ? 'active' : ''}" 
+                                        onclick="toggleReminder('${prescription.id}', '${med.name}')">
+                                    <i class="fas fa-bell"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${prescription.notes ? `
+                        <div style="background: #fff3cd; padding: 10px; border-radius: 8px; margin: 10px 0; font-size: 14px;">
+                            <i class="fas fa-sticky-note" style="color: #856404;"></i> ${prescription.notes}
+                        </div>
+                    ` : ''}
+
+                    <div class="prescription-actions">
+                        <button class="action-btn delete-btn" onclick="deletePrescription('${prescription.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle reminder
+        async function toggleReminder(prescriptionId, medicineName) {
+            try {
+                const prescriptionRef = db.collection('prescriptions').doc(prescriptionId);
+                const doc = await prescriptionRef.get();
+                const prescription = doc.data();
+
+                const updatedMedicines = prescription.medicines.map(med => {
+                    if (med.name === medicineName) {
+                        return { ...med, remindersEnabled: !med.remindersEnabled };
+                    }
+                    return med;
+                });
+
+                await prescriptionRef.update({ medicines: updatedMedicines });
+                const newState = updatedMedicines.find(m => m.name === medicineName).remindersEnabled;
+                showNotification(`🔔 Reminder ${newState ? 'enabled' : 'disabled'} for ${medicineName}`, 'success');
+                loadPrescriptions();
+            } catch (error) {
+                console.error('Error toggling reminder:', error);
+                showNotification('Error updating reminder', 'error');
+            }
+        }
+
+        // Delete prescription
+        async function deletePrescription(prescriptionId) {
+            if (!confirm('Are you sure you want to delete this prescription?')) return;
+
+            try {
+                await db.collection('prescriptions').doc(prescriptionId).delete();
+                showNotification('✅ Prescription deleted successfully', 'success');
+                loadPrescriptions();
+            } catch (error) {
+                console.error('Error deleting prescription:', error);
+                showNotification('❌ Error deleting prescription', 'error');
+            }
+        }
+
+        // Generate unique prescription ID
+        function generatePrescriptionId() {
+            return 'PRESC-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update active reminders bar
+        function updateActiveRemindersBar(medicines) {
+            const activeMeds = medicines.filter(m => m.remindersEnabled);
+            const bar = document.getElementById('activeRemindersBar');
+            const countSpan = document.getElementById('reminderCount');
+            const tagsDiv = document.getElementById('reminderTags');
+
+            if (activeMeds.length > 0) {
+                bar.style.display = 'flex';
+                countSpan.textContent = activeMeds.length;
+                
+                tagsDiv.innerHTML = activeMeds.map(med => `
+                    <span class="reminder-tag">
+                        <i class="fas fa-pills"></i> ${med.name} @ ${med.reminderTime}
+                    </span>
+                `).join('');
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        // Scroll to form
+        function scrollToForm() {
+            document.querySelector('.add-prescription-card').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            console.log('Prescription page loaded - FCM ready with VAPID key!');
+        });
+    </script>
+</body>
+</html>
